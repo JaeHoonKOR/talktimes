@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Noto_Sans_KR } from 'next/font/google'
+import Script from 'next/script'
 import Navbar from './components/Navbar'
 import './globals.css'
 
@@ -20,14 +21,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <script
+      <body className={notoSansKr.className}>
+        <Script
           src="https://t1.kakaocdn.net/kakao_js_sdk/2.6.0/kakao.min.js"
+          strategy="beforeInteractive"
           integrity="sha384-6MFdIr0zOira1CHQkedUqJVql0YtcZA1P0nbPrQYJXVJZUkTk/oX4U9GhUIs3/z8"
           crossOrigin="anonymous"
-        ></script>
-      </head>
-      <body className={notoSansKr.className}>
+        />
         <Navbar />
         <div className="pt-16">
           {children}
