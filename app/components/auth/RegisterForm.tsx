@@ -44,7 +44,7 @@ export default function RegisterForm() {
     if (!password) {
       newErrors.password = '비밀번호를 입력해주세요.';
     } else if (!isValidPassword(password)) {
-      newErrors.password = '비밀번호는 최소 8자 이상이며, 문자, 숫자, 특수문자를 각각 하나 이상 포함해야 합니다.';
+      newErrors.password = '비밀번호는 8자 이상이며, 영문, 숫자, 특수문자를 포함해야 합니다.';
     }
     
     // 비밀번호 확인 검증
@@ -75,6 +75,11 @@ export default function RegisterForm() {
         setEmail('');
         setPassword('');
         setConfirmPassword('');
+        
+        // 회원가입 성공 후 로그인 페이지로 리다이렉트
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 2000);
       } else {
         setErrors({ general: result.message || '회원가입 중 오류가 발생했습니다.' });
       }
@@ -102,7 +107,7 @@ export default function RegisterForm() {
           redirectUri: 'http://localhost:4000/api/auth/kakao/callback',
         });
       } catch (error) {
-        console.error('카카오 회원가입 에러:', error);
+        console.error('카카오 로그인 에러:', error);
       }
     } else if (provider === 'google') {
       console.log('구글 회원가입 시도...');
@@ -115,11 +120,8 @@ export default function RegisterForm() {
   if (isSuccess) {
     return (
       <div className="bg-green-50 border border-green-200 rounded-md p-6 mt-8 text-center">
-        <h3 className="text-xl font-semibold text-green-800 mb-2">회원가입 완료!</h3>
-        <p className="text-green-700 mb-4">회원가입이 성공적으로 완료되었습니다.</p>
-        <Link href="/login" className="inline-block bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition duration-200">
-          로그인하러 가기
-        </Link>
+        <h3 className="text-xl font-semibold text-green-800 mb-2">회원가입 성공!</h3>
+        <p className="text-green-700 mb-4">로그인 페이지로 이동합니다...</p>
       </div>
     );
   }
@@ -142,13 +144,13 @@ export default function RegisterForm() {
           <input
             id="email"
             type="email"
-            className={`w-full px-3 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder-gray-400`}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder-gray-400"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your@email.com"
             disabled={isLoading}
           />
-          {errors.email && <p className="mt-1.5 text-sm text-red-600">{errors.email}</p>}
+          {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
         </div>
         
         <div>
@@ -158,18 +160,16 @@ export default function RegisterForm() {
           <input
             id="password"
             type="password"
-            className={`w-full px-3 py-2 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder-gray-400`}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder-gray-400"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="********"
             disabled={isLoading}
           />
-          {errors.password && <p className="mt-1.5 text-sm text-red-600">{errors.password}</p>}
-          {!errors.password && (
-            <p className="mt-1.5 text-xs text-gray-500">
-              비밀번호는 최소 8자 이상이며, 문자, 숫자, 특수문자를 각각 하나 이상 포함해야 합니다.
-            </p>
-          )}
+          {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+          <p className="mt-1 text-xs text-gray-500">
+            비밀번호는 8자 이상이며, 영문, 숫자, 특수문자를 포함해야 합니다.
+          </p>
         </div>
         
         <div>
@@ -179,13 +179,13 @@ export default function RegisterForm() {
           <input
             id="confirmPassword"
             type="password"
-            className={`w-full px-3 py-2 border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder-gray-400`}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder-gray-400"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="********"
             disabled={isLoading}
           />
-          {errors.confirmPassword && <p className="mt-1.5 text-sm text-red-600">{errors.confirmPassword}</p>}
+          {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
         </div>
         
         <button
@@ -193,7 +193,7 @@ export default function RegisterForm() {
           className="w-full bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 disabled:opacity-50 mt-4 font-medium"
           disabled={isLoading}
         >
-          {isLoading ? '처리 중...' : '회원가입'}
+          {isLoading ? '가입 중...' : '가입하기'}
         </button>
       </form>
       

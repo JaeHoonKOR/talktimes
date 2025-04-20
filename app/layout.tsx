@@ -10,8 +10,20 @@ const notoSansKr = Noto_Sans_KR({
 })
 
 export const metadata: Metadata = {
-  title: 'TalkTimes - 개인화된 뉴스레터 서비스',
-  description: '카카오톡으로 받아보는 맞춤형 뉴스레터 서비스',
+  title: '뉴스직송 JikSong',
+  description: '딱 당신 취향, 바로 도착. 관심있는 뉴스와 토픽을 선택하면 매일 아침 당신만의 뉴스를 직송해 드립니다.',
+  icons: {
+    icon: [
+      { url: '/logos/mainlogo.png', type: 'image/png' },
+      { url: '/favicon.ico' }
+    ],
+    shortcut: '/logos/mainlogo.png',
+    apple: '/logos/mainlogo.png',
+    other: {
+      rel: 'apple-touch-icon-precomposed',
+      url: '/logos/mainlogo.png',
+    },
+  },
 }
 
 export default function RootLayout({
@@ -20,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="ko">
       <body className={notoSansKr.className}>
         <Script
           src="https://t1.kakaocdn.net/kakao_js_sdk/2.6.0/kakao.min.js"

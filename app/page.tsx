@@ -60,7 +60,7 @@ export default async function Home() {
         <div className="container relative pt-24 pb-20">
           <div className="text-center">
             <h1 className="heading-1 text-gray-900">
-              <span className="text-indigo-600">뉴스직송</span> JikSend
+              <span className="text-indigo-600">뉴스직송</span> JikSong
             </h1>
             <p className="mt-6 text-xl text-gray-600 max-w-2xl mx-auto">
               딱 당신 취향, 바로 도착. 관심있는 뉴스와 토픽을 선택하면 
@@ -74,24 +74,17 @@ export default async function Home() {
                 뉴스레터 샘플 보기
               </Link>
             </div>
-            <div className="mt-16 relative max-w-3xl mx-auto">
-              <div className="absolute inset-0 -z-10 bg-gradient-to-tr from-indigo-100 to-indigo-50 rounded-2xl transform rotate-1"></div>
-              <div className="card relative z-10 overflow-hidden">
-                <Image 
-                  src="https://i.imgur.com/tT9VAZF.png" 
-                  alt="뉴스레터 미리보기" 
-                  width={1200}
-                  height={800}
-                  className="w-full h-auto rounded-t-lg"
-                />
-              </div>
-            </div>
+          </div>
+          
+          {/* Preview Section - NewsPreview 컴포넌트로 대체 */}
+          <div className="mt-8" id="preview">
+            <NewsPreview initialNews={newsData} />
           </div>
         </div>
       </section>
 
       {/* How it works */}
-      <section className="section">
+      <section className="section py-20 bg-gradient-to-b from-indigo-50/50 to-white">
         <div className="container">
           <div className="text-center mb-16">
             <h2 className="heading-2 text-gray-900">어떻게 작동하나요?</h2>
@@ -100,16 +93,72 @@ export default async function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {steps.map((step, index) => (
-              <div key={index} className="text-center">
-                <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-2xl font-bold text-indigo-600">{index + 1}</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {/* Step 1 */}
+            <div className="relative group bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="relative">
+                <div className="aspect-[3/4] mb-6">
+                  <Image
+                    src="/images/girlwatchingnews.png"
+                    alt="관심사 선택"
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
                 </div>
-                <h3 className="heading-3 mb-4">{step.title}</h3>
-                <p className="text-gray-600">{step.description}</p>
+                <div className="absolute top-3 left-3 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
+                  1
+                </div>
               </div>
-            ))}
+              <div className="text-center">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">관심사 선택</h3>
+                <p className="text-gray-600 text-sm">기술, 경제, 생활, 스포츠 등 관심있는 분야를 선택하세요.</p>
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="relative group bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="relative">
+                <div className="aspect-[3/4] mb-6">
+                  <Image
+                    src="/images/manselectingconnect.png"
+                    alt="이메일 연결"
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                </div>
+                <div className="absolute top-3 left-3 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
+                  2
+                </div>
+              </div>
+              <div className="text-center">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">이메일일 연결</h3>
+                <p className="text-gray-600 text-sm">이메일을을 추가하고 간단한 설정을 완료하세요.</p>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="relative group bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="relative">
+                <div className="aspect-[3/4] mb-6">
+                  <Image
+                    src="/images/manrecievenews.png"
+                    alt="매일 뉴스 받기"
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                </div>
+                <div className="absolute top-3 left-3 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
+                  3
+                </div>
+              </div>
+              <div className="text-center">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">매일 뉴스 받기</h3>
+                <p className="text-gray-600 text-sm">매일 아침, 선별된 최고의 뉴스를 카카오톡으로 받아보세요.</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -137,9 +186,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Preview Section - NewsPreview 컴포넌트로 대체 */}
-      <NewsPreview initialNews={newsData} />
-      
       {/* Newsletter Features */}
       <section className="section bg-gray-50">
         <div className="container">
@@ -275,7 +321,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* AI Summary Section - AISummarySection 컴포넌트로 대체 */}
+      {/* AI Summary Section */}
       <AISummarySection initialSummaries={summaryData} />
 
       {/* CTA Section */}
@@ -307,9 +353,9 @@ export default async function Home() {
       <footer className="bg-white border-t border-gray-100 py-12">
         <div className="container">
           <div className="text-center">
-            <h2 className="font-bold text-xl text-gray-900 mb-2">뉴스직송 JikSend</h2>
+            <h2 className="font-bold text-xl text-gray-900 mb-2">뉴스직송 JikSong</h2>
             <p className="text-gray-500 mb-6">세상의 소식을 직송합니다. 완전 무료 맞춤형 뉴스 서비스</p>
-            <p className="text-gray-400 text-sm">© 2024 JikSend. All rights reserved.</p>
+            <p className="text-gray-400 text-sm">© 2024 JikSong. All rights reserved.</p>
           </div>
         </div>
       </footer>
@@ -411,7 +457,7 @@ const newsletterFeatures: FeatureWithIcon[] = [
     ],
     icon: ({ className }: { className: string }) => (
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
       </svg>
     ),
   },

@@ -34,60 +34,57 @@ export default function SocialLoginButtons({ onSocialLogin }: SocialLoginButtons
     };
   }, []);
 
-  // 소셜 로그인 아이콘 설정
-  const socialIcons = [
-    {
-      provider: 'kakao',
-      src: 'https://i.imgur.com/KvfL6lL.png',
-      alt: 'Kakao',
-      title: '카카오로 계속하기'
-    },
-    {
-      provider: 'google',
-      src: 'https://i.imgur.com/1K3MjDY.png',
-      alt: 'Google',
-      title: 'Google 로그인'
-    },
-    {
-      provider: 'naver',
-      src: 'https://i.imgur.com/XjKJcLA.png',
-      alt: 'Naver',
-      title: '네이버 로그인'
-    }
-  ];
-
   return (
-    <>
-      <div className="relative my-6">
+    <div className="my-6">
+      <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200"></div>
+          <div className="w-full border-t border-gray-300"></div>
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">소셜 계정으로 계속하기</span>
+          <span className="px-2 bg-white text-gray-500">간편 로그인</span>
         </div>
       </div>
 
-      <div className="flex justify-center space-x-5 mb-6">
-        {socialIcons.map(icon => (
-          <button
-            key={icon.provider}
-            onClick={() => onSocialLogin(icon.provider)}
-            className="p-2 rounded-full hover:bg-gray-50 transition duration-200"
-            title={icon.title}
-          >
-            <Image
-              src={icon.src}
-              alt={icon.alt}
-              width={40}
-              height={40}
-              className="object-contain w-auto h-[40px]"
-              loading="lazy"
-              quality={85}
-              sizes="40px"
-            />
-          </button>
-        ))}
+      <div className="mt-6 grid grid-cols-3 gap-3 justify-items-center max-w-[240px] mx-auto">
+        <button
+          onClick={() => onSocialLogin('kakao')}
+          className="flex justify-center items-center w-12 h-12 rounded-full bg-[#FEE500] hover:bg-[#FEE500]/90 transition-colors"
+        >
+          <Image
+            src="/logos/kakaotalk.png"
+            alt="Kakao"
+            width={32}
+            height={32}
+            className="w-8 h-8"
+          />
+        </button>
+
+        <button
+          onClick={() => onSocialLogin('google')}
+          className="flex justify-center items-center w-12 h-12 rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          <Image
+            src="/logos/google.png"
+            alt="Google"
+            width={48}
+            height={48}
+            className="w-12 h-12"
+          />
+        </button>
+
+        <button
+          onClick={() => onSocialLogin('naver')}
+          className="flex justify-center items-center w-12 h-12 rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          <Image
+            src="/logos/naver.png"
+            alt="Naver"
+            width={48}
+            height={48}
+            className="w-12 h-12"
+          />
+        </button>
       </div>
-    </>
+    </div>
   );
 } 

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -7,12 +8,18 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-white shadow-sm fixed w-full z-10">
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex justify-between items-center">
-          {/* 로고 */}
-          <Link href="/" className="text-xl font-bold text-indigo-600">
-            뉴스직송
+    <nav className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center h-16">
+          <Link href="/" className="flex items-center space-x-2">
+            <Image
+              src="/logos/mainlogo.png"
+              alt="뉴스직송 로고"
+              width={32}
+              height={32}
+              className="w-10 h-10"
+            />
+            <span className="text-xl font-bold text-[#212121]">JikSong</span>
           </Link>
 
           {/* 데스크톱 메뉴 */}
