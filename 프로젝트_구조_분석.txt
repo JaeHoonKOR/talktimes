@@ -1,0 +1,245 @@
+# JikSend 프론트엔드 프로젝트 구조 분석
+
+## 프로젝트 개요
+- **목적**: AI 기반 개인화 뉴스 서비스 (JikSend)
+- **기술 스택**: Next.js 15.3.0, React 19, TypeScript 5.8.3, Tailwind CSS 4
+- **주요 기능**: 맞춤형 뉴스 큐레이션, AI 요약, 키워드 기반 필터링, 다국어 지원, 개인화된 뉴스레터
+
+## 루트 디렉토리 구조
+
+### 주요 설정 파일
+- **`package.json`**: 프로젝트 의존성 및 스크립트 정의
+  - Next.js 15.3.0, React 19, TypeScript 5.8.3
+  - UI: Radix UI, Framer Motion, GSAP, Tailwind CSS
+  - 인증: NextAuth.js, Google OAuth
+  - 3D: Three.js, React Three Fiber
+- **`tsconfig.json`**: TypeScript 컴파일러 설정
+- **`next.config.mjs`**: Next.js 설정 파일
+- **`components.json`**: Shadcn UI 컴포넌트 설정
+- **`.env`** / **`.env.local`**: 환경 변수 설정
+- **`eslint.config.mjs`**: ESLint 설정
+- **`postcss.config.mjs`**: PostCSS 설정 (Tailwind CSS 처리)
+
+## app 디렉토리 (Next.js 13+ App Router)
+
+### 1. 핵심 페이지 파일
+- **`layout.tsx`**: 전체 애플리케이션 레이아웃 정의
+- **`page.tsx`**: 메인 랜딩 페이지 (홈페이지)
+- **`globals.css`**: 전역 스타일시트 (Tailwind CSS 기반)
+- **`favicon.ico`**: 웹사이트 파비콘
+
+### 2. 주요 디렉토리 구조
+
+#### 2.1 `/components` - 재사용 가능한 컴포넌트
+
+##### 핵심 UI 컴포넌트
+- **`Navbar.tsx`**: 네비게이션 메뉴 (5.4KB)
+- **`LoadingSpinner.tsx`**: 로딩 상태 표시 (2.3KB)
+- **`ErrorBoundary.tsx`**: 에러 경계 처리 (3.1KB)
+- **`Providers.tsx`**: Context 제공자 래퍼
+- **`ClientComponents.tsx`**: 클라이언트 컴포넌트 집합
+- **`FadeIn.tsx`**: 페이드인 애니메이션 컴포넌트
+
+##### 뉴스 관련 컴포넌트
+- **`NewsPreview.tsx`**: 뉴스 아이템 미리보기 (22KB, 440라인)
+  - 뉴스 제목, 요약, 이미지 표시
+  - 번역 및 상세보기 기능
+- **`PersonalizedNewsSection.tsx`**: 맞춤형 뉴스 섹션 (13KB, 296라인)
+  - 키워드 기반 필터링
+  - 무한 스크롤 구현
+- **`NewsSourceIcon.tsx`**: 뉴스 소스 아이콘 표시
+- **`AISummarySection.tsx`**: AI 요약 섹션 (5.0KB)
+- **`NewsletterSignup.tsx`**: 뉴스레터 구독 인터페이스 (5.6KB)
+
+##### 개인화 관련 컴포넌트
+- **`KeywordManager.tsx`**: 키워드 관리 메인 컴포넌트 (15KB, 362라인)
+- **`ClientKeywordManager.tsx`**: 클라이언트 사이드 키워드 관리
+- **`KeywordManagerRenderer.tsx`**: 키워드 관리 렌더러
+- **`TopicSelector.tsx`**: 토픽 선택 컴포넌트 (3.8KB)
+- **`TopicSelectorClient.tsx`**: 클라이언트 사이드 토픽 선택
+- **`ClientTopicRenderer.tsx`**: 토픽 렌더러
+
+##### 기능 컴포넌트
+- **`TranslationToggle.tsx`**: 번역 토글 버튼 (1.8KB)
+- **`BackgroundIcons.tsx`**: 배경 아이콘 표시 (2.7KB)
+- **`SkipNavigation.tsx`**: 접근성을 위한 건너뛰기 네비게이션
+
+#### 2.2 `/components/sections` - 페이지 섹션 컴포넌트
+
+##### 메인 페이지 섹션들
+- **`NewHeroSection.tsx`**: 새로운 히어로 섹션 (7.1KB)
+- **`HeroSection.tsx`**: 기존 히어로 섹션 (15KB, 386라인)
+- **`NewFeaturesSection.tsx`**: 새로운 기능 섹션 (12KB, 341라인)
+- **`FeaturesSection.tsx`**: 기존 기능 섹션 (15KB, 404라인)
+- **`HowItWorksSection.tsx`**: 서비스 작동 방식 (12KB, 300라인)
+- **`PersonalizationSection.tsx`**: 개인화 설정 섹션 (7.4KB)
+- **`NewsPreviewSection.tsx`**: 뉴스 미리보기 섹션 (3.9KB)
+- **`ValuePropositionSection.tsx`**: 가치 제안 섹션 (6.2KB)
+- **`PricingSection.tsx`**: 가격 정보 섹션 (7.2KB)
+- **`CTASection.tsx`**: 콜 투 액션 섹션 (6.0KB)
+- **`ContactSection.tsx`**: 연락처 섹션 (6.9KB)
+
+##### 기능 관련 섹션
+- **`TranslationSection.tsx`**: 번역 기능 섹션 (3.6KB)
+- **`TranslationCacheManager.tsx`**: 번역 캐시 관리 (6.0KB)
+- **`StaticContent.tsx`**: 정적 콘텐츠 표시 (1.9KB)
+
+##### UI 컴포넌트
+- **`MessengerInterface.tsx`**: 메신저 인터페이스 (3.8KB)
+- **`PhoneFrame.tsx`**: 폰 프레임 컴포넌트
+
+##### 설정 파일
+- **`constants.ts`**: 섹션별 상수
+- **`types.ts`**: 섹션별 타입 정의
+- **`index.ts`**: 섹션 컴포넌트 내보내기
+
+#### 2.3 `/components/auth` - 인증 관련 컴포넌트
+
+#### 2.4 `/api` - API 라우트 핸들러
+- **`news.ts`**: 뉴스 데이터 API (3.2KB)
+- **`auth.ts`**: 인증 API (1.4KB)
+- **`/translation`**: 번역 서비스 API
+- **`/personalized-news`**: 개인화 뉴스 API
+- **`/auth`**: 인증 관련 API
+- **`/keywords`**: 키워드 관리 API
+- **`/news-data`**: 뉴스 데이터 처리 API
+
+#### 2.5 `/hooks` - 커스텀 React 훅
+- **`usePersonalizedNews.ts`**: 개인화 뉴스 훅 (7.9KB, 222라인)
+  - 뉴스 데이터 페칭
+  - 키워드 기반 필터링
+  - 무한 스크롤 관리
+- **`useTranslation.ts`**: 번역 기능 훅 (3.4KB, 118라인)
+- 다국어 지원
+  - 번역 캐시 관리
+
+#### 2.6 `/contexts` - 전역 상태 관리
+- **`PersonalizationContext.tsx`**: 개인화 설정 컨텍스트 (3.7KB, 141라인)
+  - 사용자 키워드 관리
+  - 개인화 설정 저장
+
+#### 2.7 `/types` - TypeScript 타입 정의
+- **`index.ts`**: 메인 타입 정의 (3.0KB, 118라인)
+  - NewsItem, AISummary 등 핵심 타입
+- **`sections.ts`**: 섹션 관련 타입 (1.6KB, 71라인)
+
+#### 2.8 `/services` - 비즈니스 로직 및 데이터 처리
+- **`/translation`**: 번역 서비스 로직
+- **`/news`**: 뉴스 데이터 처리 서비스
+
+#### 2.9 `/constants` - 상수 및 설정 데이터
+- **`landing.tsx`**: 랜딩 페이지 상수 (9.7KB, 204라인)
+- **`keywords.ts`**: 키워드 목록 (2.1KB, 31라인)
+- **`topics.tsx`**: 토픽 정의 (5.8KB, 80라인)
+- **`backgroundIcons.ts`**: 배경 아이콘 설정 (1.6KB, 69라인)
+
+#### 2.10 `/translation` - 다국어 지원
+다국어 지원 관련 파일들
+
+#### 2.11 `/utils` - 유틸리티 함수
+
+#### 2.12 페이지 라우트
+- **`/login`**: 로그인 페이지
+- **`/register`**: 회원가입 페이지
+
+## public 디렉토리 - 정적 자산
+
+### 주요 디렉토리
+- **`/icons`**: 아이콘 파일들
+- **`/images`**: 이미지 자산
+- **`/logos`**: 로고 파일들
+- **`/news_sample`**: 샘플 뉴스 이미지
+
+### 주요 파일
+- **`manifest.json`**: PWA 매니페스트
+- **`kakao-icon.png`**: 카카오 아이콘
+- **`next.svg`**, **`vercel.svg`**: Next.js/Vercel 로고
+- **`globe.svg`**, **`window.svg`**, **`file.svg`**: UI 아이콘
+
+## src 디렉토리
+- **`/utils`**: 추가 유틸리티 함수들
+
+## 주요 기능 및 특징
+
+### 1. 컴포넌트 아키텍처
+- **서버 컴포넌트**: 기본 렌더링, 데이터 페칭
+- **클라이언트 컴포넌트**: 인터랙티브 요소, 상태 관리
+- **하이브리드 접근**: 성능과 UX의 균형
+
+### 2. 상태 관리
+- **Context API**: PersonalizationContext를 통한 전역 상태
+- **로컬 상태**: useState를 활용한 컴포넌트별 상태
+- **서버 상태**: API 라우트를 통한 데이터 관리
+
+### 3. 성능 최적화
+- **코드 스플리팅**: Next.js 자동 코드 분할
+- **이미지 최적화**: Next.js Image 컴포넌트
+- **메모이제이션**: useMemo, useCallback 활용
+- **Turbopack**: 개발 환경에서 빠른 번들링
+
+### 4. UI/UX 기술 스택
+- **Tailwind CSS**: 유틸리티 퍼스트 CSS 프레임워크
+- **Radix UI**: 접근성 중심 컴포넌트
+- **Framer Motion**: 애니메이션 라이브러리
+- **GSAP**: 고급 애니메이션
+- **Three.js**: 3D 그래픽 (선택적 사용)
+
+### 5. 인증 및 보안
+- **NextAuth.js**: 인증 프레임워크
+- **Google OAuth**: 소셜 로그인
+- **환경 변수**: 민감한 정보 보호
+
+### 6. 개발 도구
+- **TypeScript**: 타입 안전성
+- **ESLint**: 코드 품질 관리
+- **Git**: 버전 관리
+
+## 메인 페이지 구성 (page.tsx)
+
+### 섹션 순서
+1. **NewHeroSection**: 메인 히어로 섹션
+2. **NewFeaturesSection**: 주요 기능 소개
+3. **PersonalizationSection**: 개인화 설정
+4. **NewsPreviewSection**: 뉴스 미리보기
+5. **ValuePropositionSection**: 가치 제안
+6. **PricingSection**: 가격 정보
+7. **CTASection**: 행동 유도
+8. **ContactSection**: 연락처/푸터
+
+### 데이터 흐름
+- **샘플 데이터**: 개발 단계에서 하드코딩된 뉴스/요약 데이터
+- **Dynamic 렌더링**: `force-dynamic` 설정으로 실시간 데이터 지원
+- **ISR 준비**: 향후 증분적 정적 재생성 지원
+
+## 확장성 및 유지보수성
+
+### 1. 모듈화된 구조
+- 기능별 디렉토리 분리
+- 컴포넌트 재사용성 극대화
+- 명확한 관심사 분리
+
+### 2. 타입 안전성
+- 엄격한 TypeScript 설정
+- 인터페이스 기반 개발
+- 런타임 에러 최소화
+
+### 3. 성능 모니터링
+- 번들 크기 최적화
+- 렌더링 성능 추적
+- 사용자 경험 지표 관리
+
+## 개발 및 배포
+
+### 개발 환경
+- **`npm run dev`**: Turbopack 기반 개발 서버
+- **Hot Reload**: 실시간 코드 변경 반영
+- **TypeScript**: 타입 체크 및 IntelliSense
+
+### 빌드 및 배포
+- **`npm run build`**: 프로덕션 빌드
+- **`npm run start`**: 프로덕션 서버 실행
+- **`npm run lint`**: 코드 품질 검사
+
+## 결론
+
+이 프로젝트는 현대적인 웹 개발 패러다임을 따르며, 성능, 접근성, 개발자 경험을 모두 고려한 구조로 설계되었습니다. Next.js 15의 최신 기능들을 활용하여 AI 기반 개인화 뉴스 서비스를 효율적으로 구현할 수 있는 확장 가능한 아키텍처를 제공합니다. 

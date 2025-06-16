@@ -1,29 +1,68 @@
-import type { Metadata } from 'next'
-import { Noto_Sans_KR } from 'next/font/google'
+import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
 import Navbar from './components/Navbar'
+import Providers from './components/Providers'
+import SkipNavigation from './components/SkipNavigation'
 import './globals.css'
 
-const notoSansKr = Noto_Sans_KR({
-  subsets: ['latin'],
-  weight: ['400', '500', '700'],
-})
-
 export const metadata: Metadata = {
-  title: '뉴스직송 JikSong',
-  description: '딱 당신 취향, 바로 도착. 관심있는 뉴스와 토픽을 선택하면 매일 아침 당신만의 뉴스를 직송해 드립니다.',
+  title: '뉴스직송 JikSong | AI 맞춤형 뉴스 큐레이션',
+  description: '🚀 딱 당신 취향, 바로 도착! AI가 엄선한 맞춤형 뉴스를 매일 아침 직송해드립니다. 평생 무료, 광고 없음, 개인화 완벽.',
+  keywords: '뉴스, 맞춤형 뉴스, AI 뉴스, 뉴스레터, 개인화, 뉴스 큐레이션, 뉴스직송, JikSong',
+  authors: [{ name: '뉴스직송 팀' }],
+  creator: '뉴스직송 JikSong',
+  publisher: '뉴스직송 JikSong',
+  robots: 'index, follow',
+  openGraph: {
+    type: 'website',
+    locale: 'ko_KR',
+    url: 'https://jiksong.com',
+    title: '뉴스직송 JikSong | AI 맞춤형 뉴스 큐레이션',
+    description: '🚀 딱 당신 취향, 바로 도착! AI가 엄선한 맞춤형 뉴스를 매일 아침 직송해드립니다.',
+    siteName: '뉴스직송 JikSong',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: '뉴스직송 JikSong - AI 맞춤형 뉴스 서비스',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '뉴스직송 JikSong | AI 맞춤형 뉴스 큐레이션',
+    description: '🚀 딱 당신 취향, 바로 도착! AI가 엄선한 맞춤형 뉴스를 매일 아침 직송해드립니다.',
+    images: ['/og-image.png'],
+    creator: '@jiksong_news',
+  },
   icons: {
     icon: [
-      { url: '/logos/mainlogo.png', type: 'image/png' },
-      { url: '/favicon.ico' }
+      { url: '/logos/mainlogo.png', type: 'image/png', sizes: '32x32' },
+      { url: '/logos/mainlogo.png', type: 'image/png', sizes: '16x16' },
+      { url: '/favicon.ico', sizes: 'any' }
     ],
     shortcut: '/logos/mainlogo.png',
-    apple: '/logos/mainlogo.png',
-    other: {
-      rel: 'apple-touch-icon-precomposed',
-      url: '/logos/mainlogo.png',
-    },
+    apple: [
+      { url: '/logos/mainlogo.png', sizes: '180x180', type: 'image/png' },
+    ],
+    other: [
+      {
+        rel: 'apple-touch-icon-precomposed',
+        url: '/logos/mainlogo.png',
+      },
+    ],
   },
+  manifest: '/manifest.json',
+  category: 'news',
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: '#667eea',
+  colorScheme: 'light',
 }
 
 export default function RootLayout({
@@ -32,18 +71,32 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ko">
-      <body className={notoSansKr.className}>
+    <html lang="ko" className="scroll-smooth">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-TileColor" content="#667eea" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="뉴스직송" />
+      </head>
+      <body className="antialiased">
+        <SkipNavigation />
         <Script
           src="https://t1.kakaocdn.net/kakao_js_sdk/2.6.0/kakao.min.js"
           strategy="beforeInteractive"
           integrity="sha384-6MFdIr0zOira1CHQkedUqJVql0YtcZA1P0nbPrQYJXVJZUkTk/oX4U9GhUIs3/z8"
           crossOrigin="anonymous"
         />
-        <Navbar />
-        <div className="pt-16">
-          {children}
-        </div>
+        <Providers>
+          <div className="min-h-screen flex flex-col">
+            <Navbar />
+            <main id="main-content" className="flex-grow pt-16">
+              {children}
+            </main>
+          </div>
+        </Providers>
       </body>
     </html>
   )

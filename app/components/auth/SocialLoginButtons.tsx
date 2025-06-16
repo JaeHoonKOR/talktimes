@@ -35,55 +35,73 @@ export default function SocialLoginButtons({ onSocialLogin }: SocialLoginButtons
   }, []);
 
   return (
-    <div className="my-6">
-      <div className="relative">
+    <div className="my-8">
+      {/* 구분선 */}
+      <div className="relative mb-8">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-300"></div>
+          <div className="w-full border-t border-gray-200/50"></div>
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">간편 로그인</span>
+          <span className="px-6 glass-morphism rounded-full text-gray-600 font-medium">또는 간편하게</span>
         </div>
       </div>
 
-      <div className="mt-6 grid grid-cols-3 gap-3 justify-items-center max-w-[240px] mx-auto">
+      {/* 소셜 로그인 버튼들 */}
+      <div className="grid grid-cols-3 gap-4">
+        {/* 카카오 */}
         <button
           onClick={() => onSocialLogin('kakao')}
-          className="flex justify-center items-center w-12 h-12 rounded-full bg-[#FEE500] hover:bg-[#FEE500]/90 transition-colors"
+          className="group relative flex justify-center items-center w-full h-14 glass-morphism rounded-xl hover:scale-105 transition-all duration-300 border border-yellow-200/30 hover:border-yellow-300/50"
         >
+          <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/10 to-yellow-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <Image
             src="/logos/kakaotalk.png"
             alt="Kakao"
-            width={32}
-            height={32}
-            className="w-8 h-8"
+            width={24}
+            height={24}
+            className="w-6 h-6 relative z-10"
           />
+          <span className="ml-2 text-xs font-medium text-gray-700 relative z-10">카카오</span>
         </button>
 
+        {/* 구글 */}
         <button
           onClick={() => onSocialLogin('google')}
-          className="flex justify-center items-center w-12 h-12 rounded-lg hover:bg-gray-50 transition-colors"
+          className="group relative flex justify-center items-center w-full h-14 glass-morphism rounded-xl hover:scale-105 transition-all duration-300 border border-gray-200/30 hover:border-gray-300/50"
         >
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-red-400/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <Image
             src="/logos/google.png"
             alt="Google"
-            width={48}
-            height={48}
-            className="w-12 h-12"
+            width={20}
+            height={20}
+            className="w-5 h-5 relative z-10"
           />
+          <span className="ml-2 text-xs font-medium text-gray-700 relative z-10">구글</span>
         </button>
 
+        {/* 네이버 */}
         <button
           onClick={() => onSocialLogin('naver')}
-          className="flex justify-center items-center w-12 h-12 rounded-lg hover:bg-gray-50 transition-colors"
+          className="group relative flex justify-center items-center w-full h-14 glass-morphism rounded-xl hover:scale-105 transition-all duration-300 border border-green-200/30 hover:border-green-300/50"
         >
+          <div className="absolute inset-0 bg-gradient-to-br from-green-400/10 to-green-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <Image
             src="/logos/naver.png"
             alt="Naver"
-            width={48}
-            height={48}
-            className="w-12 h-12"
+            width={20}
+            height={20}
+            className="w-5 h-5 relative z-10"
           />
+          <span className="ml-2 text-xs font-medium text-gray-700 relative z-10">네이버</span>
         </button>
+      </div>
+
+      {/* 추가 정보 */}
+      <div className="mt-6 text-center">
+        <p className="text-xs text-gray-500">
+          소셜 로그인으로 빠르게 시작하세요 • 별도 가입 없이 바로 이용
+        </p>
       </div>
     </div>
   );

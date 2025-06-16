@@ -1,0 +1,21 @@
+{
+  "name": "JikSend",
+  "short_name": "JikSend",
+  "description": "개인화된 뉴스 및 번역 서비스",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "/logos/mainlogo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logos/mainlogo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+} 

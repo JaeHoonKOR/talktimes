@@ -1,21 +1,16 @@
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
+import LoginForm from '../components/auth/LoginForm';
 
 // 메타데이터 설정
 export const metadata: Metadata = {
-  title: '로그인 - 뉴스직송 JikSend',
-  description: '뉴스직송 JikSend 로그인 페이지입니다. 계정에 로그인하여 맞춤형 뉴스를 받아보세요.',
+  title: '로그인 - 뉴스직송 JikSong | AI 맞춤형 뉴스 큐레이션',
+  description: '뉴스직송 JikSong 계정으로 로그인하여 AI가 엄선한 맞춤형 뉴스를 받아보세요. 안전하고 빠른 로그인.',
+  openGraph: {
+    title: '로그인 - 뉴스직송 JikSong',
+    description: '뉴스직송 JikSong 계정으로 로그인하여 AI가 엄선한 맞춤형 뉴스를 받아보세요.',
+  },
 };
 
-// 동적으로 로딩되는 컴포넌트
-const LoginForm = dynamic(() => import('../components/auth/LoginForm'), {
-  loading: () => <div className="p-6 text-center">로그인 폼 로딩 중...</div>,
-});
-
 export default function LoginPage() {
-  return (
-    <div className="container mx-auto px-4 py-10">
-      <LoginForm />
-    </div>
-  );
+  return <LoginForm />;
 } 
