@@ -1,3 +1,5 @@
+'use client';
+
 import { CacheStatus, TranslationService } from '@/app/services/translation/translation.service';
 import { Button } from '@/src/components/ui/button';
 import { Card } from '@/src/components/ui/card';

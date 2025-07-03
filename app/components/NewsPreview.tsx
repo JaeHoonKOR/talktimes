@@ -1,17 +1,19 @@
 'use client';
 
+import { AnimatePresence, motion } from 'framer-motion';
+import { gsap } from 'gsap';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { NewsItem } from '../types';
 import { NewsPreviewProps } from '../types/sections';
 
 // 샘플 뉴스 데이터
-const sampleNewsData = [
+const sampleNewsData: NewsItem[] = [
   {
     id: 'sample1',
     title: '삼성전자, 차세대 인공지능 반도체 개발 발표',
     excerpt: '삼성전자가 메모리와 AI를 결합한 차세대 반도체 개발을 발표했습니다. 이번 기술은 기존 대비 전력 효율이 40% 향상되었으며, 내년 초부터 생산 예정입니다.',
     category: '기술',
-    image: 'https://via.placeholder.com/300x200?text=Samsung+AI+Chip',
     imageUrl: 'https://via.placeholder.com/300x200?text=Samsung+AI+Chip',
     publishedAt: '2024-01-20T09:00:00Z',
     source: '테크뉴스'
@@ -21,7 +23,6 @@ const sampleNewsData = [
     title: '한국은행, 기준금리 동결 결정',
     excerpt: '한국은행 금융통화위원회가 기준금리를 현 수준에서 동결하기로 결정했습니다. 이는 글로벌 경제 불확실성과 국내 물가 안정을 고려한 결정입니다.',
     category: '경제',
-    image: 'https://via.placeholder.com/300x200?text=Bank+of+Korea',
     imageUrl: 'https://via.placeholder.com/300x200?text=Bank+of+Korea',
     publishedAt: '2024-01-19T14:30:00Z',
     source: '경제일보'
@@ -31,33 +32,84 @@ const sampleNewsData = [
     title: '네이버, 생성형 AI 서비스 출시',
     excerpt: '네이버가 한국어에 최적화된 생성형 AI 서비스를 정식 출시했습니다. 국내 데이터로 훈련된 이 모델은 국내 환경에 맞는 응답을 제공합니다.',
     category: '기술',
-    image: 'https://via.placeholder.com/300x200?text=Naver+AI',
     imageUrl: 'https://via.placeholder.com/300x200?text=Naver+AI',
     publishedAt: '2024-01-18T11:15:00Z',
     source: 'IT뉴스'
   }
 ];
 
+// 애니메이션 variants
+const containerVariants = {
+  hidden: { opacity: 0, scale: 0.95, y: 10 },
+  visible: { 
+    opacity: 1, 
+    scale: 1, 
+    y: 0,
+    transition: { 
+      type: "spring", 
+      stiffness: 300, 
+      damping: 30,
+      mass: 1
+    }
+  },
+  exit: { 
+    opacity: 0, 
+    scale: 0.95, 
+    y: 10, 
+    transition: { 
+      duration: 0.2,
+      ease: "easeOut"
+    } 
+  }
+};
+
+// 버튼 애니메이션 variants
+const buttonVariants = {
+  inactive: { scale: 1, boxShadow: "0px 1px 2px rgba(0,0,0,0.1)" },
+  active: { 
+    scale: 1.05, 
+    boxShadow: "0px 4px 10px rgba(0,0,0,0.15)",
+    transition: { type: "spring", stiffness: 400, damping: 10 }
+  }
+};
+
 export default function NewsPreview({ initialNews }: NewsPreviewProps) {
   const [news, setNews] = useState(initialNews.length > 0 ? initialNews : sampleNewsData);
   const [viewMode, setViewMode] = useState<'email' | 'kakao'>('email');
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const emailBtnRef = useRef<HTMLButtonElement>(null);
+  const kakaoBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     // initialNews가 비어있으면 샘플 데이터 사용
     if (initialNews.length === 0) {
       console.log('샘플 뉴스 데이터를 사용합니다.');
     }
+
+    // GSAP 애니메이션 설정
+    if (containerRef.current) {
+      gsap.set(containerRef.current, { 
+        willChange: "transform, opacity",
+        perspective: 1000,
+        backfaceVisibility: "hidden"
+      });
+    }
   }, [initialNews]);
+
+  // 모드 전환 시 GSAP 애니메이션 적용
+  useEffect(() => {
+    if (viewMode === 'email' && emailBtnRef.current && kakaoBtnRef.current) {
+      gsap.to(emailBtnRef.current, { scale: 1.05, duration: 0.2, ease: "power2.out" });
+      gsap.to(kakaoBtnRef.current, { scale: 1, duration: 0.2, ease: "power2.out" });
+    } else if (viewMode === 'kakao' && emailBtnRef.current && kakaoBtnRef.current) {
+      gsap.to(kakaoBtnRef.current, { scale: 1.05, duration: 0.2, ease: "power2.out" });
+      gsap.to(emailBtnRef.current, { scale: 1, duration: 0.2, ease: "power2.out" });
+    }
+  }, [viewMode]);
 
   const handleModeSwitch = (mode: 'email' | 'kakao') => {
     if (mode === viewMode) return;
-    
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setViewMode(mode);
-      setTimeout(() => setIsTransitioning(false), 100);
-    }, 300);
+    setViewMode(mode);
   };
 
   // 카카오톡 인터페이스
@@ -128,11 +180,14 @@ export default function NewsPreview({ initialNews }: NewsPreviewProps) {
                 <div className="bg-white rounded-2xl rounded-tl-sm p-3 shadow-sm max-w-xs">
                   <div className="relative h-32 mb-2 rounded-lg overflow-hidden">
                 <Image
-                  src={item.imageUrl || item.image || "https://via.placeholder.com/300x200?text=News"}
+                  src={item.imageUrl || "https://via.placeholder.com/300x200?text=News"}
                   alt={item.title}
                   fill
                   className="object-cover"
-                      sizes="200px"
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 200px"
+                  placeholder="blur"
+                  blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjI1IiB2aWV3Qm94PSIwIDAgNDAwIDIyNSI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyMjUiIGZpbGw9IiNlZWVlZWUiLz48L3N2Zz4="
+                  priority={index < 2}
                     />
                     <div className="absolute top-2 left-2">
                       <span className="text-xs font-medium px-2 py-1 bg-black/70 text-white rounded-full">
@@ -340,11 +395,14 @@ export default function NewsPreview({ initialNews }: NewsPreviewProps) {
                             </div>
                             <div className="w-32 h-24 relative flex-shrink-0">
                               <Image
-                                src={item.imageUrl || item.image || "https://via.placeholder.com/300x200?text=News"}
+                                src={item.imageUrl || "https://via.placeholder.com/300x200?text=News"}
                                 alt={item.title}
                                 fill
                                 className="object-cover rounded-md"
-                                sizes="128px"
+                                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 200px"
+                                placeholder="blur"
+                                blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjI1IiB2aWV3Qm94PSIwIDAgNDAwIDIyNSI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyMjUiIGZpbGw9IiNlZWVlZWUiLz48L3N2Zz4="
+                                priority={index < 2}
                               />
                             </div>
                           </div>
@@ -395,45 +453,66 @@ export default function NewsPreview({ initialNews }: NewsPreviewProps) {
       <div className="flex justify-center">
         <div className="bg-white rounded-full p-1 shadow-lg border border-gray-200">
           <div className="flex space-x-1">
-            <button
+            <motion.button
+              ref={emailBtnRef}
               onClick={() => handleModeSwitch('email')}
-              className={`flex items-center space-x-2 px-6 py-3 rounded-full font-medium transition-all duration-300 ${
+              className={`flex items-center space-x-2 px-6 py-3 rounded-full font-medium ${
                 viewMode === 'email'
-                  ? 'bg-blue-600 text-white shadow-md transform scale-105'
+                  ? 'bg-blue-600 text-white'
                   : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
               }`}
+              variants={buttonVariants}
+              animate={viewMode === 'email' ? 'active' : 'inactive'}
+              whileHover={{ scale: viewMode === 'email' ? 1.05 : 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              style={{ willChange: "transform" }}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
               <span>이메일</span>
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              ref={kakaoBtnRef}
               onClick={() => handleModeSwitch('kakao')}
-              className={`flex items-center space-x-2 px-6 py-3 rounded-full font-medium transition-all duration-300 ${
+              className={`flex items-center space-x-2 px-6 py-3 rounded-full font-medium ${
                 viewMode === 'kakao'
-                  ? 'bg-yellow-400 text-gray-800 shadow-md transform scale-105'
+                  ? 'bg-yellow-400 text-gray-800'
                   : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
               }`}
+              variants={buttonVariants}
+              animate={viewMode === 'kakao' ? 'active' : 'inactive'}
+              whileHover={{ scale: viewMode === 'kakao' ? 1.05 : 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              style={{ willChange: "transform" }}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
               <span>카카오톡</span>
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>
 
       {/* 인터페이스 컨테이너 */}
-      <div 
-        className={`transition-all duration-500 ease-in-out ${
-          isTransitioning 
-            ? 'opacity-0 transform scale-95 blur-sm' 
-            : 'opacity-100 transform scale-100 blur-0'
-        }`}
-      >
-        {viewMode === 'email' ? <GmailInterface /> : <KakaoInterface />}
+      <div ref={containerRef}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={viewMode}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="will-change-transform"
+            style={{ 
+              willChange: "transform, opacity",
+              backfaceVisibility: "hidden"
+            }}
+          >
+            {viewMode === 'email' ? <GmailInterface /> : <KakaoInterface />}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );

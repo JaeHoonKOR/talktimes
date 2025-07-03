@@ -155,21 +155,28 @@ export async function GET(req: NextRequest) {
       
       // 로그인하지 않은 경우 일반 뉴스를 맞춤형 뉴스 형식으로 변환
       if (!session || !session.user) {
-        return NextResponse.json({
+        const responseObj = NextResponse.json({
           success: true,
           data: {
             news: data.data?.news || [],
             message: "로그인하면 맞춤형 뉴스를 제공해 드립니다."
           }
         });
+        
+        // 캐시 헤더 추가
+        responseObj.headers.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+        return responseObj;
       }
       
-      return NextResponse.json(data);
+      const responseObj = NextResponse.json(data);
+      // 인증된 사용자는 짧은 캐시 시간 설정
+      responseObj.headers.set('Cache-Control', 'private, max-age=30, stale-while-revalidate=60');
+      return responseObj;
     } catch (fetchError) {
       console.error('백엔드 연결 실패:', fetchError);
       
       // 백엔드 연결 실패 시 폴백 데이터 사용
-      return NextResponse.json({
+      const responseObj = NextResponse.json({
         success: true,
         data: {
           news: fallbackNews,
@@ -178,6 +185,10 @@ export async function GET(req: NextRequest) {
             : "뉴스 서버에 연결할 수 없습니다. 기본 뉴스를 표시합니다."
         }
       });
+      
+      // 오류 응답에도 캐시 헤더 추가 (짧은 시간)
+      responseObj.headers.set('Cache-Control', 'public, max-age=30, stale-while-revalidate=60');
+      return responseObj;
     }
   } catch (error) {
     console.error('API 라우트 처리 중 오류 발생:', error);
@@ -189,7 +200,7 @@ export async function GET(req: NextRequest) {
         news: fallbackNews,
         message: "서버 연결에 문제가 있습니다. 기본 뉴스를 표시합니다."
       }
-    });
+    }, { status: 500 });
   }
 }
 
@@ -198,7 +209,27 @@ export async function POST(req: NextRequest) {
   try {
     // 요청 데이터 파싱
     const body = await req.json();
-    const keywords = body.keywords || [];
+    
+    // 입력 검증
+    if (!body.keywords || !Array.isArray(body.keywords)) {
+      return NextResponse.json({ 
+        success: false, 
+        error: "유효하지 않은 키워드 형식입니다." 
+      }, { status: 400 });
+    }
+    
+    // 키워드 길이 제한
+    const keywords = body.keywords
+      .filter((kw: any) => typeof kw === 'string' && kw.trim().length > 0)
+      .map((kw: string) => kw.trim())
+      .slice(0, 10); // 최대 10개로 제한
+    
+    if (keywords.length === 0) {
+      return NextResponse.json({ 
+        success: false, 
+        error: "최소 하나 이상의 유효한 키워드가 필요합니다." 
+      }, { status: 400 });
+    }
     
     // 사용자 세션 확인
     const session = await getServerSession();
@@ -228,7 +259,11 @@ export async function POST(req: NextRequest) {
         if (response.ok) {
           const data = await response.json();
           console.log('백엔드 응답 성공:', data);
-          return NextResponse.json(data);
+          
+          const responseObj = NextResponse.json(data);
+          // 검색 결과는 짧은 시간 캐싱
+          responseObj.headers.set('Cache-Control', 'private, max-age=60, stale-while-revalidate=120');
+          return responseObj;
         } else {
           console.error('백엔드 응답 실패:', await response.text());
           throw new Error('백엔드 API 응답 오류');
@@ -252,43 +287,37 @@ export async function POST(req: NextRequest) {
       }
       
       // 검색 결과 반환
-      return NextResponse.json({
+      const responseObj = NextResponse.json({
         success: true,
         data: {
           news: filteredNews,
           keywords,
-          message: keywords.length > 0 
-            ? `'${keywords.join(', ')}' 키워드에 대한 ${filteredNews.length}개의 뉴스를 찾았습니다.` 
-            : null
+          message: `${filteredNews.length}개의 관련 뉴스를 찾았습니다.`
         }
       });
       
-    } catch (fetchError) {
-      console.error('키워드 검색 중 오류 발생:', fetchError);
-      console.error('오류 상세 정보:', {
-        error: fetchError instanceof Error ? fetchError.message : String(fetchError),
-        stack: fetchError instanceof Error ? fetchError.stack : undefined,
-        keywords,
-        backendUrl: BACKEND_URL,
-        enableBackend: ENABLE_BACKEND
-      });
+      // 로컬 검색 결과도 캐싱
+      responseObj.headers.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
+      return responseObj;
       
-      // 오류 발생 시 기본 뉴스 반환
+    } catch (error) {
+      console.error('뉴스 검색 중 오류 발생:', error);
+      
+      // 오류 발생 시 빈 결과 대신 기본 뉴스 반환
       return NextResponse.json({
-        success: true,
+        success: false,
         data: {
           news: fallbackNews,
           keywords,
-          message: "백엔드 연결에 문제가 발생했습니다. 기본 뉴스를 표시합니다. 잠시 후 다시 시도해주세요."
+          message: "뉴스 검색 중 오류가 발생했습니다. 기본 뉴스를 표시합니다."
         }
-      });
+      }, { status: 500 });
     }
   } catch (error) {
     console.error('POST 요청 처리 중 오류 발생:', error);
-    
-    return NextResponse.json({
-      success: false,
-      error: "요청을 처리할 수 없습니다."
-    }, { status: 400 });
+    return NextResponse.json({ 
+      success: false, 
+      error: "요청 처리 중 오류가 발생했습니다." 
+    }, { status: 500 });
   }
 } 

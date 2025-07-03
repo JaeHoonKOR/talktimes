@@ -51,7 +51,9 @@ export default function usePersonalizedNews(): UsePersonalizedNewsReturn {
 
   // 에러 처리 헬퍼
   const handleError = useCallback((error: unknown, context: string) => {
+    if (process.env.NODE_ENV === 'development') {
     console.error(`${context}:`, error);
+    }
     
     let errorMessage = '알 수 없는 오류가 발생했습니다.';
     
@@ -89,20 +91,9 @@ export default function usePersonalizedNews(): UsePersonalizedNewsReturn {
 
     try {
       const controller = new AbortController();
-      // 타임아웃 시간을 15초로 늘림
       const timeoutId = setTimeout(() => controller.abort(), 15000);
 
       const keywordTexts = keywords.map(k => k.keyword);
-      console.log('=== API 요청 디버그 정보 ===');
-      console.log('요청 시작:', new Date().toISOString());
-      console.log('키워드:', keywordTexts);
-      console.log('요청 URL:', '/api/personalized-news');
-      console.log('요청 메서드:', 'POST');
-      console.log('요청 데이터:', JSON.stringify({ keywords: keywordTexts }));
-
-      // 사용자 피드백을 위한 최소 로딩 시간 보장
-      const startTime = Date.now();
-      const MIN_LOADING_TIME = 1000; // 최소 1초 동안 로딩 표시
 
       const response = await fetch('/api/personalized-news', {
         method: 'POST',
@@ -113,17 +104,7 @@ export default function usePersonalizedNews(): UsePersonalizedNewsReturn {
         signal: controller.signal,
       });
 
-      console.log('응답 수신:', new Date().toISOString());
-      console.log('응답 상태:', response.status, response.statusText);
-      console.log('응답 헤더:', JSON.stringify(Object.fromEntries([...response.headers.entries()])));
-
       clearTimeout(timeoutId);
-
-      // 최소 로딩 시간 보장
-      const loadingTime = Date.now() - startTime;
-      if (loadingTime < MIN_LOADING_TIME) {
-        await new Promise(resolve => setTimeout(resolve, MIN_LOADING_TIME - loadingTime));
-      }
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -131,12 +112,11 @@ export default function usePersonalizedNews(): UsePersonalizedNewsReturn {
       }
 
       const data: NewsResponse = await response.json();
-      console.log('API 응답 수신:', data);
 
       if (data.success && data.data?.news) {
         updateState({
           news: data.data.news,
-          keywords: data.data.keywords || keywordTexts,
+          keywords: keywords,
           message: data.data.message || null,
           error: null,
           isLoading: false,
@@ -146,7 +126,7 @@ export default function usePersonalizedNews(): UsePersonalizedNewsReturn {
       } else {
         updateState({
           news: [],
-          keywords: keywordTexts,
+          keywords: keywords,
           message: data.data?.message || "선택한 키워드에 맞는 뉴스를 찾을 수 없습니다.",
           error: null,
           isLoading: false,
@@ -157,7 +137,6 @@ export default function usePersonalizedNews(): UsePersonalizedNewsReturn {
       // AbortError 처리 (타임아웃)
       if (error instanceof DOMException && error.name === 'AbortError') {
         if (retryCount < 3) {
-          console.log(`재시도 ${retryCount + 1}/3...`);
           setRetryCount(prev => prev + 1);
           setTimeout(() => fetchPersonalizedNews(keywords), 2000);
           return;
@@ -172,28 +151,18 @@ export default function usePersonalizedNews(): UsePersonalizedNewsReturn {
 
   // 키워드로 뉴스 가져오기 시작
   const fetchNewsWithKeywords = useCallback(async (keywords: Keyword[]): Promise<void> => {
-    console.log('=== usePersonalizedNews.fetchNewsWithKeywords 호출됨 ===');
-    console.log('시간:', new Date().toISOString());
-    console.log('수신한 키워드 수:', keywords.length);
-    console.log('수신한 키워드 목록:', keywords);
-    
-    console.log('상태 업데이트: userKeywords 설정');
     setUserKeywords(keywords);
-    console.log('상태 업데이트: shouldFetchNews를 true로 설정');
     setShouldFetchNews(true);
     
-    console.log('직접 fetchPersonalizedNews 호출');
     try {
       await fetchPersonalizedNews(keywords);
-      console.log('fetchPersonalizedNews 호출 완료');
     } catch (error) {
-      console.error('fetchPersonalizedNews 호출 중 오류:', error);
+      handleError(error, 'fetchNewsWithKeywords Error');
     }
-  }, [fetchPersonalizedNews]);
+  }, [fetchPersonalizedNews, handleError]);
 
   // 수동 새로고침
   const refreshNews = useCallback(() => {
-    console.log('뉴스 새로고침');
     if (userKeywords.length > 0) {
       fetchPersonalizedNews(userKeywords);
     }
@@ -201,14 +170,8 @@ export default function usePersonalizedNews(): UsePersonalizedNewsReturn {
 
   // Effect for automatic fetching
   useEffect(() => {
-    console.log('=== usePersonalizedNews useEffect 트리거됨 ===');
-    console.log('shouldFetchNews:', shouldFetchNews);
-    console.log('userKeywords:', userKeywords);
-    
     if (shouldFetchNews && userKeywords.length > 0) {
-      console.log('useEffect에서 fetchPersonalizedNews 호출');
       fetchPersonalizedNews(userKeywords);
-      console.log('shouldFetchNews를 false로 재설정');
       setShouldFetchNews(false);
     }
   }, [shouldFetchNews, userKeywords, fetchPersonalizedNews]);

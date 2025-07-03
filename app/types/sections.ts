@@ -42,13 +42,6 @@ export interface HeroSectionProps extends SectionProps {
   stats?: StatData[];
 }
 
-// How It Works 섹션 Props
-export interface HowItWorksSectionProps extends SectionProps {
-  features: FeatureWithIcon[];
-  newsSources?: NewsSource[];
-  pipelineSteps?: PipelineStep[];
-}
-
 // 뉴스 미리보기 컴포넌트 Props
 export interface NewsPreviewProps {
   initialNews: NewsItem[];
@@ -60,12 +53,22 @@ export interface NewsPreviewSectionProps extends SectionProps {
   summaryData: AISummary[];
 }
 
-// 가격 섹션 Props
-export interface PricingSectionProps extends SectionProps {
-  // 향후 가격 플랜 데이터 추가 가능
-}
-
-// CTA 섹션 Props
-export interface CTASectionProps extends SectionProps {
-  // CTA 관련 데이터 추가 가능
+// 서비스 가치 및 구독 통합 섹션 Props
+export interface ServiceValueSectionProps extends SectionProps {
+  testimonials?: {
+    name: string;
+    comment: string;
+    rating: number;
+  }[];
+  trustIndicators?: {
+    value: string;
+    label: string;
+  }[];
+  pricingPlan?: {
+    name: string;
+    price: string;
+    originalPrice?: string;
+    features: string[];
+    isPopular?: boolean;
+  };
 } 

@@ -682,3 +682,190 @@ select:focus {
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
   transform: translateY(-1px);
 }
+
+/* 기존 스타일 */
+.interactive-element {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+}
+
+.interactive-element:hover {
+  transform: translateY(-2px);
+}
+
+.premium-text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600;
+}
+
+.elite-heading {
+  @apply font-extrabold tracking-tight;
+}
+
+.premium-button {
+  @apply bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300;
+}
+
+/* 터치 디바이스에서 active 상태 지원 */
+@media (hover: none) {
+  .touch-feedback {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .touch-feedback:active {
+    transform: scale(0.95);
+    background-color: #E5E7EB;
+    transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out;
+  }
+}
+
+/* 키워드 버튼 터치 피드백 */
+.keyword-button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* 폰트 로딩 전략 개선 */
+@font-face {
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/notosanskr/v36/PbykFmXiEBPT4ITbgNA5Cgm203Tq4JJWq209pU0DPdWuqxJFA4GNDCBYtw.woff2') format('woff2');
+  unicode-range: U+AC00-D7A3, U+1100-11FF, U+3130-318F, U+A960-A97F, U+D7B0-D7FF;
+}
+
+@font-face {
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/notosanskr/v36/PbykFmXiEBPT4ITbgNA5Cgm203Tq4JJWq209pU0DPdWuqxJFA4GNDCBYtw.woff2') format('woff2');
+  unicode-range: U+AC00-D7A3, U+1100-11FF, U+3130-318F, U+A960-A97F, U+D7B0-D7FF;
+}
+
+/* 모바일 터치 영역 최적화 */
+@media (max-width: 768px) {
+  .btn-primary, .btn-secondary, .interactive-element, button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .nav-link {
+    padding: 0.5rem;
+    margin: 0.25rem;
+  }
+  
+  input, select, textarea {
+    min-height: 44px;
+    font-size: 16px; /* 모바일에서 자동 확대 방지 */
+  }
+  
+  /* 모바일에서 여백 최적화 */
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  /* 모바일에서 텍스트 크기 최적화 */
+  .heading-1 {
+    font-size: 2.25rem;
+  }
+  
+  .heading-2 {
+    font-size: 1.75rem;
+  }
+  
+  .heading-3 {
+    font-size: 1.25rem;
+  }
+}
+
+/* 모바일에서 애니메이션 효과 축소 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .animate-subtle-float,
+  .animate-subtle-pulse,
+  .animate-elegant-fade-in,
+  .animate-premium-glow,
+  .animate-bounce,
+  .animate-shimmer {
+    animation: none !important;
+  }
+  
+  .motion-safe\:animate-spin {
+    animation: none !important;
+  }
+}
+
+/* 레이아웃 시프트 방지를 위한 이미지 컨테이너 스타일 */
+.img-aspect-container {
+  position: relative;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+}
+
+.img-aspect-16-9 {
+  padding-bottom: 56.25%; /* 16:9 비율 */
+}
+
+.img-aspect-4-3 {
+  padding-bottom: 75%; /* 4:3 비율 */
+}
+
+.img-aspect-1-1 {
+  padding-bottom: 100%; /* 1:1 비율 */
+}
+
+.img-aspect-container img,
+.img-aspect-container > div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 성능 최적화된 애니메이션 */
+.hover-scale {
+  transition: transform 0.2s ease;
+  will-change: transform;
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+.hover-scale:active {
+  transform: scale(0.98);
+}
+
+/* 레이아웃 시프트 방지를 위한 폰트 대체 */
+.font-fallback {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* 모바일 터치 피드백 */
+@media (hover: none) {
+  .touch-feedback {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .touch-feedback:active::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: inherit;
+  }
+}

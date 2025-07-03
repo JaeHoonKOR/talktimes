@@ -1,8 +1,9 @@
 'use client';
 
+import { throttle } from 'lodash-es';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Badge } from '../../src/components/ui/badge';
 import { Button } from '../../src/components/ui/button';
 import { Skeleton } from '../../src/components/ui/skeleton';
@@ -11,7 +12,7 @@ import usePersonalizedNews from '../hooks/usePersonalizedNews';
 import KeywordManager from './KeywordManager';
 
 interface Keyword {
-  id?: number;
+  id?: number | string;
   keyword: string;
   category: string;
 }
@@ -40,69 +41,102 @@ interface PersonalizedNewsSectionProps {
  *    - 전역 상태 관리를 위한 연결
  *    - KeywordManager에게 selectedTopics 전달
  */
-export default function PersonalizedNewsSection({ initialKeywords = [] }: PersonalizedNewsSectionProps) {
+const PersonalizedNewsSection = React.memo(({ initialKeywords = [] }: PersonalizedNewsSectionProps) => {
   const { news, keywords, isLoading, error, message, refreshNews, fetchNewsWithKeywords } = usePersonalizedNews();
   const [showKeywordManager, setShowKeywordManager] = useState(initialKeywords.length === 0);
-  const { state, setKeywords } = usePersonalization();
+  const { state } = usePersonalization();
+  const [localLoading, setLocalLoading] = useState(false);
+  const [localMessage, setLocalMessage] = useState<string | null>(null);
+  const [loadingProgress, setLoadingProgress] = useState(0); // 로딩 진행 상태 추가
 
   // 초기 키워드가 있을 경우 뉴스 가져오기
-  React.useEffect(() => {
+  useEffect(() => {
     if (initialKeywords.length > 0 && !showKeywordManager) {
-      console.log('초기 키워드로 뉴스 가져오기:', initialKeywords);
       fetchNewsWithKeywords(initialKeywords);
+      simulateLoadingProgress(); // 로딩 진행 상태 시뮬레이션 시작
     }
   }, [initialKeywords, fetchNewsWithKeywords, showKeywordManager]);
 
-  // 키워드 설정 완료 처리
-  const handleSettingsComplete = (keywords: Keyword[]) => {
-    console.log('=== PersonalizedNewsSection.handleSettingsComplete 호출됨 ===');
-    console.log('시간:', new Date().toISOString());
-    console.log('받은 키워드 수:', keywords.length);
-    console.log('받은 키워드 목록:', keywords);
-    console.log('PersonalizationContext 상태:', state);
+  // 로딩 진행 상태 시뮬레이션
+  const simulateLoadingProgress = () => {
+    setLoadingProgress(0);
+    const interval = setInterval(() => {
+      setLoadingProgress(prev => {
+        const next = prev + Math.random() * 15;
+        return next > 90 ? 90 : next;
+      });
+    }, 300);
     
-    console.log('showKeywordManager 상태 변경: true -> false');
-    setShowKeywordManager(false);
-    
-    // 로딩 상태 메시지 표시
-    console.log('로컬 updateLocalState 함수 호출');
-    updateLocalState({ isLoading: true, message: "맞춤형 뉴스를 불러오는 중입니다..." });
-    
-    // 키워드로 뉴스 가져오기
-    console.log('fetchNewsWithKeywords 함수 호출 준비');
-    try {
-      console.log('fetchNewsWithKeywords 함수 호출 시작');
-      fetchNewsWithKeywords(keywords);
-      console.log('fetchNewsWithKeywords 함수 호출 완료');
-    } catch (error) {
-      console.error('fetchNewsWithKeywords 함수 호출 중 오류:', error);
-    }
+    return () => clearInterval(interval);
   };
 
-  // 상태 업데이트 헬퍼 함수
-  const updateLocalState = (updates: Partial<{ isLoading: boolean; message: string | null }>) => {
-    if (updates.isLoading !== undefined) {
-      // isLoading 상태 명시적 설정
-      // usePersonalizedNews 훅의 isLoading을 직접 수정할 수 없으므로 UI에 표시
-      document.getElementById('loading-state')?.setAttribute('data-loading', updates.isLoading.toString());
-    }
-    if (updates.message !== null && updates.message !== undefined) {
-      // 메시지 상태 업데이트 (DOM 조작)
-      const messageEl = document.getElementById('status-message');
-      if (messageEl) {
-        messageEl.textContent = updates.message;
-        messageEl.style.display = updates.message ? 'block' : 'none';
+  // 키워드 설정 완료 처리 - 쓰로틀링 적용
+  const handleSettingsComplete = useCallback(
+    throttle((keywords: Keyword[]) => {
+      setShowKeywordManager(false);
+      
+      // 로딩 상태 설정
+      setLocalLoading(true);
+      setLocalMessage("맞춤형 뉴스를 불러오는 중입니다...");
+      simulateLoadingProgress(); // 로딩 진행 상태 시뮬레이션 시작
+      
+      // 키워드로 뉴스 가져오기
+      try {
+        fetchNewsWithKeywords(keywords);
+      } catch (error) {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('fetchNewsWithKeywords 함수 호출 중 오류:', error);
+        }
       }
+    }, 300),
+    [fetchNewsWithKeywords]
+  );
+
+  // 로딩 상태 및 메시지 업데이트 (useEffect로 관리)
+  useEffect(() => {
+    setLocalLoading(isLoading);
+    setLocalMessage(message);
+    
+    // 로딩이 완료되면 진행 상태를 100%로 설정
+    if (!isLoading && loadingProgress > 0) {
+      setLoadingProgress(100);
+      const timeout = setTimeout(() => setLoadingProgress(0), 500);
+      return () => clearTimeout(timeout);
     }
-  };
+  }, [isLoading, message, loadingProgress]);
 
   // 키워드 관리로 돌아가기
-  const handleBackToSettings = () => {
+  const handleBackToSettings = useCallback(() => {
     setShowKeywordManager(true);
-  };
+  }, []);
+
+  // 뉴스 새로고침 처리
+  const handleRefreshNews = useCallback(() => {
+    if (keywords.length > 0) {
+      setLocalLoading(true);
+      setLocalMessage("뉴스를 새로고침 중입니다...");
+      simulateLoadingProgress();
+      refreshNews();
+    }
+  }, [keywords, refreshNews]);
+
+  // 오류 메시지 사용자 친화적으로 변환
+  const getUserFriendlyErrorMessage = useCallback((error: string | null) => {
+    if (!error) return null;
+    
+    if (error.includes('network') || error.includes('fetch')) {
+      return "인터넷 연결을 확인해주세요. 서버에 연결할 수 없습니다.";
+    } else if (error.includes('timeout')) {
+      return "서버 응답 시간이 너무 깁니다. 잠시 후 다시 시도해주세요.";
+    } else if (error.includes('not found') || error.includes('404')) {
+      return "요청하신 정보를 찾을 수 없습니다.";
+    }
+    
+    return "뉴스를 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.";
+  }, []);
 
   // 카테고리별 배경색 지정
-  const getCategoryColor = (category: string) => {
+  const getCategoryColor = useCallback((category: string) => {
     const colorMap: Record<string, string> = {
       '기술': 'bg-[#F59E0B]',
       '경제': 'bg-[#10B981]',
@@ -114,183 +148,270 @@ export default function PersonalizedNewsSection({ initialKeywords = [] }: Person
     };
     
     return colorMap[category] || 'bg-[#4B5563]';
-  };
+  }, []);
 
-  // 해당 뉴스에 포함된 키워드 찾기 (정확한 매칭)
-  const findMatchingKeywords = (title: string, excerpt: string) => {
-    if (!keywords || keywords.length === 0) return [];
+  // 키워드 매니저 섹션
+  const keywordManagerSection = useMemo(() => {
+    if (!showKeywordManager) return null;
+    
+    return (
+      <KeywordManager 
+        onSettingsComplete={handleSettingsComplete} 
+        selectedTopics={state.selectedTopics}
+      />
+    );
+  }, [showKeywordManager, handleSettingsComplete, state.selectedTopics]);
 
-    return keywords.filter(keyword => {
-      // 키워드가 짧은 경우 (3글자 미만)는 단어 경계 검사를 더 엄격하게 수행
-      if (keyword.length < 3) {
-        const titleRegex = new RegExp(`\\b${keyword}\\b|\\b${keyword}[가-힣]|[가-힣]${keyword}\\b`, 'i');
-        const excerptRegex = new RegExp(`\\b${keyword}\\b|\\b${keyword}[가-힣]|[가-힣]${keyword}\\b`, 'i');
-        return titleRegex.test(title) || excerptRegex.test(excerpt);
-      }
+  // 뉴스 아이템별 매칭되는 키워드를 미리 계산
+  const newsWithMatchedKeywords = useMemo(() => {
+    if (!news || news.length === 0 || !keywords || keywords.length === 0) {
+      return news;
+    }
+
+    return news.map(item => {
+      const lowerTitle = item.title.toLowerCase();
+      const lowerExcerpt = item.excerpt.toLowerCase();
       
-      // 영어 키워드는 단어 경계 검사
-      if (/^[a-zA-Z]+$/.test(keyword)) {
-        const regex = new RegExp(`\\b${keyword}\\b`, 'i');
-        return regex.test(title) || regex.test(excerpt);
-      }
+      // 각 뉴스 아이템에 매칭되는 키워드 미리 계산
+      const matchedKeywords = keywords.filter(keyword => {
+        const lowerKeyword = keyword.keyword.toLowerCase();
+        return lowerTitle.includes(lowerKeyword) || lowerExcerpt.includes(lowerKeyword);
+      });
       
-      // 한글 및 기타 키워드는 일반 포함 검사
-      const lowerKeyword = keyword.toLowerCase();
-      const lowerTitle = title.toLowerCase();
-      const lowerExcerpt = excerpt.toLowerCase();
-      
-      return lowerTitle.includes(lowerKeyword) || lowerExcerpt.includes(lowerKeyword);
+      return {
+        ...item,
+        matchedKeywords
+      };
     });
-  };
+  }, [news, keywords]);
 
-  return (
-    <div className="container mx-auto px-4 max-w-6xl space-y-12">
-      <div className="text-center mb-16">
-        <h2 className="text-5xl font-black text-gray-900 mb-6 elite-heading">
-          당신만의 <span className="premium-text-gradient">뉴스 취향</span> 설정
-        </h2>
-        <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-          관심 있는 키워드를 선택하면, AI가 학습해서 더욱 정확한 뉴스를 추천해드립니다.
-        </p>
-        <span className="sr-only">
-          이 섹션에서는 개인화된 뉴스 추천을 위한 키워드를 설정하고 맞춤형 뉴스를 확인할 수 있습니다.
-        </span>
-      </div>
-      
-      {showKeywordManager ? (
-        <KeywordManager 
-          onSettingsComplete={handleSettingsComplete} 
-          selectedTopics={state.selectedTopics}
-        />
-      ) : (
-        <div className="space-y-8">
-          {/* 뉴스 섹션 중앙 정렬 및 최대 너비 적용 */}
-          <div className="text-center mb-8">
-            <h3 className="text-3xl font-bold text-gray-900 mb-4">
-              나만의 맞춤형 뉴스
-            </h3>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              선택하신 키워드를 기반으로 AI가 엄선한 뉴스를 보여드립니다.
-            </p>
-            
-            {/* 상태 메시지 및 로딩 표시 */}
-            <div id="loading-state" data-loading={isLoading.toString()} className="mt-4">
-              {isLoading && (
-                <div className="flex items-center justify-center gap-2 text-blue-600 animate-pulse">
-                  <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                  <span>뉴스를 불러오는 중...</span>
-                </div>
-              )}
-              <p 
-                id="status-message" 
-                className={`mt-2 text-sm ${error ? 'text-red-500' : 'text-blue-600'}`}
-                style={{display: (message || error) ? 'block' : 'none'}}
-              >
-                {error || message}
-              </p>
-            </div>
+  // 뉴스 섹션
+  const newsSection = useMemo(() => {
+    if (showKeywordManager) return null;
+    
+    const userFriendlyError = getUserFriendlyErrorMessage(error);
+    
+    return (
+      <div className="space-y-6">
+        <div className="text-center mb-6">
+          <h3 className="text-2xl font-bold text-[#121212] mb-3">
+            나만의 맞춤형 뉴스
+          </h3>
+          <p className="text-[#4B5563] max-w-2xl mx-auto">
+            선택하신 키워드를 기반으로 AI가 엄선한 뉴스를 보여드립니다.
+          </p>
+          
+          {/* 키워드 관리 및 새로고침 버튼 */}
+          <div className="flex justify-center gap-3 mt-4">
+            <Button
+              onClick={handleBackToSettings}
+              className="bg-white text-[#4B5563] border border-[#D1D5DB] hover:bg-gray-50"
+              aria-label="키워드 설정 변경하기"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+              </svg>
+              키워드 설정 변경
+            </Button>
+            <Button
+              onClick={handleRefreshNews}
+              className="bg-[#3B82F6] hover:bg-[#2563EB] text-white"
+              disabled={localLoading || keywords.length === 0}
+              aria-label="뉴스 새로고침"
+            >
+              <svg className={`w-4 h-4 mr-2 ${localLoading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              새로고침
+            </Button>
           </div>
-
-          {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...Array(6)].map((_, index) => (
-                <Skeleton 
-                  key={index} 
-                  className="h-[400px] w-full rounded-xl bg-gray-100" 
-                />
-              ))}
-            </div>
-          ) : error ? (
-            <div className="text-center py-12 bg-red-50 rounded-xl">
-              <p className="text-red-600 text-xl mb-4">
-                뉴스를 불러오는 중 오류가 발생했습니다.
+          
+          {/* 로딩 상태 표시 개선 */}
+          {localLoading && (
+            <div className="mt-6 max-w-md mx-auto">
+              <div className="flex items-center justify-center gap-2 text-[#3B82F6] mb-2">
+                <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                <span>{localMessage || "뉴스를 불러오는 중..."}</span>
+              </div>
+              <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-[#3B82F6] rounded-full transition-all duration-300 ease-out"
+                  style={{ width: `${loadingProgress}%` }}
+                  role="progressbar"
+                  aria-valuenow={loadingProgress}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                ></div>
+              </div>
+              <p className="text-xs text-gray-500 mt-1 text-center">
+                {loadingProgress < 100 ? '데이터를 불러오는 중...' : '완료!'}
               </p>
-              <Button 
-                onClick={refreshNews}
-                className="premium-button interactive-element"
-              >
-                다시 시도하기
-              </Button>
             </div>
-          ) : news.length === 0 ? (
-            <div className="text-center py-12 bg-blue-50 rounded-xl">
-              <div className="text-6xl mb-4 text-blue-400">📰</div>
-              <p className="text-xl text-gray-700 mb-3 font-semibold">
-                아직 추천할 뉴스가 없습니다
-              </p>
-              <p className="text-sm text-gray-500 mb-6">
-                키워드를 더 추가하거나 다른 카테고리를 선택해보세요.
-              </p>
-              <Button 
-                onClick={handleBackToSettings}
-                className="premium-button interactive-element"
-              >
-                키워드 설정으로 돌아가기
-              </Button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {news.map((item) => {
-                const matchingKeywords = findMatchingKeywords(item.title, item.excerpt);
-                
-                return (
-                  <Link 
-                    href={`/news/${item.id}`}
-                    key={item.id} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="group block"
-                  >
-                    <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-                      <div className="relative">
-                        <Image 
-                          src={item.imageUrl || '/images/default-news.png'} 
-                          alt={item.title} 
-                          width={400} 
-                          height={250} 
-                          className="w-full h-48 object-cover"
-                        />
-                        <div className={`absolute top-3 left-3 ${getCategoryColor(item.category)} text-white px-2 py-1 text-xs rounded`}>
-                          {item.category}
-                        </div>
-                      </div>
-                      <div className="p-6">
-                        <h3 className="text-lg font-bold mb-2 line-clamp-2 group-hover:text-indigo-600 transition-colors">
-                          {item.title}
-                        </h3>
-                        <p className="text-gray-600 text-sm mb-4 line-clamp-2">{item.excerpt}</p>
-                        
-                        {matchingKeywords.length > 0 && (
-                          <div className="mb-3">
-                            <div className="flex flex-wrap gap-1.5">
-                              {matchingKeywords.map((keyword, idx) => (
-                                <Badge 
-                                  key={idx} 
-                                  variant="outline" 
-                                  className="text-xs bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100"
-                                >
-                                  # {keyword}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                        
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-500 text-xs">
-                            {new Date(item.publishedAt).toLocaleDateString('ko-KR')}
-                          </span>
-                          <span className="text-indigo-600 text-sm font-medium">{item.source}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
+          )}
+          
+          {/* 오류 메시지 개선 */}
+          {userFriendlyError && (
+            <div className="mt-4 bg-red-50 border border-red-100 rounded-lg p-4 max-w-md mx-auto" role="alert">
+              <div className="flex items-start">
+                <svg className="w-5 h-5 text-red-400 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                  <p className="text-sm text-red-700">{userFriendlyError}</p>
+                  <div className="mt-2 flex space-x-2">
+                    <Button
+                      onClick={handleRefreshNews}
+                      className="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-2 py-1 rounded"
+                      size="sm"
+                    >
+                      다시 시도
+                    </Button>
+                    <Button
+                      onClick={handleBackToSettings}
+                      className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded"
+                      size="sm"
+                    >
+                      키워드 변경
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
-      )}
+
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[...Array(6)].map((_, index) => (
+              <div key={index} className="bg-white rounded-lg overflow-hidden border border-[#E5E7EB]">
+                <div className="relative h-40 w-full">
+                  <Skeleton className="h-full w-full absolute inset-0" />
+                </div>
+                <div className="p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Skeleton className="h-5 w-16 rounded-full" />
+                    <Skeleton className="h-4 w-20" />
+                  </div>
+                  <Skeleton className="h-6 w-full mb-2" />
+                  <Skeleton className="h-4 w-full mb-1" />
+                  <Skeleton className="h-4 w-3/4 mb-3" />
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    <Skeleton className="h-5 w-16 rounded-full" />
+                    <Skeleton className="h-5 w-20 rounded-full" />
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-4 w-4 rounded-full" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : news && news.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {newsWithMatchedKeywords.map((item, index) => (
+              <div 
+                key={item.id || index} 
+                className="bg-white rounded-lg overflow-hidden border border-[#E5E7EB] hover:border-[#D1D5DB] transition-colors will-change-transform hover:shadow-md"
+              >
+                {item.imageUrl && (
+                  <div className="relative h-40 w-full overflow-hidden">
+                    <Image
+                      src={item.imageUrl}
+                      alt={item.title}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                      className="object-cover"
+                      placeholder="blur"
+                      blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjI1IiB2aWV3Qm94PSIwIDAgNDAwIDIyNSI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyMjUiIGZpbGw9IiNlZWVlZWUiLz48L3N2Zz4="
+                      priority={index < 3}
+                    />
+                  </div>
+                )}
+                <div className="p-3 sm:p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`text-xs text-white px-2 py-0.5 rounded-full ${getCategoryColor(item.category)}`}>
+                      {item.category}
+                    </span>
+                    <span className="text-xs text-[#9CA3AF]">{item.source}</span>
+                    <span className="text-xs text-[#9CA3AF] ml-auto">{item.publishedAt}</span>
+                  </div>
+                  <h4 className="text-base font-medium mb-2 line-clamp-2 text-[#121212]">
+                    {item.title}
+                  </h4>
+                  <p className="text-sm text-[#4B5563] mb-3 line-clamp-3">
+                    {item.excerpt}
+                  </p>
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {item.matchedKeywords && item.matchedKeywords.map((keyword, idx) => (
+                      <Badge key={idx} className="bg-[#EBF5FF] text-[#3B82F6]">
+                        {keyword.keyword}
+                      </Badge>
+                    ))}
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <Link 
+                      href={item.url || '#'} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-sm text-[#3B82F6] hover:underline flex items-center"
+                    >
+                      자세히 보기
+                      <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </Link>
+                    <button 
+                      className="text-sm text-[#4B5563] hover:text-[#3B82F6] p-2 rounded-full hover:bg-gray-50"
+                      aria-label="뉴스 저장"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-10 bg-gray-50 rounded-lg">
+            <div className="mb-4 text-gray-400">
+              <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1M19 20a2 2 0 002-2V8a2 2 0 00-2-2h-1M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01" />
+              </svg>
+            </div>
+            <h4 className="text-xl font-medium mb-2">뉴스를 찾을 수 없습니다</h4>
+            <p className="text-[#4B5563] mb-6 max-w-md mx-auto">
+              선택하신 키워드에 맞는 뉴스가 없습니다. 다른 키워드를 선택하거나 나중에 다시 시도해보세요.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button
+                onClick={handleBackToSettings}
+                className="bg-[#3B82F6] hover:bg-[#2563EB] text-white"
+              >
+                키워드 다시 선택하기
+              </Button>
+              <Button
+                onClick={handleRefreshNews}
+                className="bg-white border border-[#D1D5DB] text-[#4B5563] hover:bg-gray-50"
+              >
+                새로고침
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }, [showKeywordManager, localLoading, localMessage, error, isLoading, news, newsWithMatchedKeywords, getCategoryColor, handleBackToSettings, handleRefreshNews, getUserFriendlyErrorMessage, keywords.length, loadingProgress]);
+
+  return (
+    <div className="w-full">
+      {showKeywordManager ? keywordManagerSection : newsSection}
     </div>
   );
-} 
+});
+
+PersonalizedNewsSection.displayName = 'PersonalizedNewsSection';
+
+export default PersonalizedNewsSection; 

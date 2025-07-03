@@ -8,13 +8,9 @@
 
 // 메인 섹션 컴포넌트들
 export { default as ContactSection } from './ContactSection';
-export { default as CTASection } from './CTASection';
-export { default as FeaturesSection } from './FeaturesSection';
-export { default as HowItWorksSection } from './HowItWorksSection';
 export { default as NewFeaturesSection } from './NewFeaturesSection';
 export { default as NewHeroSection } from './NewHeroSection';
 export { default as NewsPreviewSection } from './NewsPreviewSection';
 export { default as PersonalizationSection } from './PersonalizationSection';
-export { default as PricingSection } from './PricingSection';
-export { default as ValuePropositionSection } from './ValuePropositionSection';
+export { default as ServiceValueSection } from './ServiceValueSection';
 

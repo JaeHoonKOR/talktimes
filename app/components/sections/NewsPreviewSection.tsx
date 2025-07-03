@@ -1,6 +1,17 @@
 import { NewsPreviewSectionProps } from '../../types/sections';
 import NewsPreview from '../NewsPreview';
 
+/**
+ * NewsPreviewSection 컴포넌트
+ * 
+ * Apple Human Interface Guidelines 영감 디자인 원칙:
+ * - 타이포그래피 중심 레이아웃
+ * - 넉넉한 여백과 간격
+ * - 절제된 색상 팔레트
+ * - 명확한 시각적 계층 구조
+ * - 부드러운 곡선과 자연스러운 그림자
+ * - 네오모피즘 디자인 요소 적용
+ */
 export default function NewsPreviewSection({ 
   className = '', 
   id = 'preview',
@@ -10,32 +21,32 @@ export default function NewsPreviewSection({
   return (
     <section 
       id={id}
-      className={`py-24 bg-gradient-to-br from-gray-50 to-white ${className}`}
+      className={`py-10 md:py-12 lg:py-16 bg-[#F9FAFB] ${className}`}
       aria-label="뉴스레터 미리보기"
     >
-      <div className="container mx-auto px-4 max-w-7xl">
+      <div className="container mx-auto px-4 max-w-4xl">
         {/* 섹션 헤더 */}
-        <div className="text-center mb-16">
-          <h2 className="text-5xl font-black text-gray-900 mb-6 elite-heading">
-            실제 <span className="premium-text-gradient">뉴스레터</span> 미리보기
+        <div className="text-center mb-6">
+          <h2 className="text-2xl md:text-3xl font-medium text-[#121212] mb-2">
+            실제 <span className="text-[#3B82F6]">뉴스레터</span> 미리보기
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-[#4B5563] max-w-xl mx-auto text-base">
             매일 아침 받게 될 뉴스레터의 실제 모습을 확인해보세요. 
             깔끔하고 읽기 쉬운 형태로 정리된 맞춤형 뉴스를 경험하실 수 있습니다.
           </p>
         </div>
 
         {/* 뉴스레터 미리보기 */}
-        <div className="max-w-6xl mx-auto">
+        <div className="bg-white rounded-lg p-3 sm:p-4 border border-[#E5E7EB] will-change-transform mb-6">
           <NewsPreview initialNews={newsData || []} />
         </div>
 
         {/* 미리보기 특징 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
           {[
             {
               icon: (
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               ),
@@ -44,7 +55,7 @@ export default function NewsPreviewSection({
             },
             {
               icon: (
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               ),
@@ -53,7 +64,7 @@ export default function NewsPreviewSection({
             },
             {
               icon: (
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               ),
@@ -63,21 +74,23 @@ export default function NewsPreviewSection({
           ].map((feature, index) => (
             <div 
               key={index} 
-              className="text-center bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-2 group"
+              className="bg-white rounded-lg p-3 border border-[#E5E7EB]"
             >
-              <div className="w-16 h-16 premium-gradient rounded-2xl flex items-center justify-center mx-auto mb-4 text-white group-hover:scale-110 transition-transform duration-300">
-                {feature.icon}
+              <div className="flex flex-col items-center text-center space-y-1">
+                <div className="w-7 h-7 rounded-full bg-[#F5F5F5] flex items-center justify-center mb-1 text-[#3B82F6]">
+                  {feature.icon}
+                </div>
+                <h3 className="text-sm font-medium text-[#121212]">{feature.title}</h3>
+                <p className="text-xs text-[#4B5563]">{feature.description}</p>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">{feature.title}</h3>
-              <p className="text-gray-600 text-sm">{feature.description}</p>
             </div>
           ))}
         </div>
 
         {/* CTA */}
-        <div className="text-center mt-16">
-          <div className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-full text-indigo-700 font-medium shadow-md hover:shadow-lg transition-all duration-300">
-            <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="text-center mt-6">
+          <div className="inline-flex items-center px-4 py-2 bg-white rounded-lg border border-[#E5E7EB] text-[#3B82F6] text-sm">
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
             매일 아침 7시, 이런 뉴스레터가 도착합니다

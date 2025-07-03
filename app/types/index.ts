@@ -9,7 +9,7 @@
 
 // 공통 타입 정의
 export interface Keyword {
-  id?: number;
+  id?: number | string;
   keyword: string;
   category: string;
 }

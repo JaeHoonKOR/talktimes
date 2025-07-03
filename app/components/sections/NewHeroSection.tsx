@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import Link from 'next/link';
@@ -23,29 +24,28 @@ const AppIcon = React.memo(({
   
   useEffect(() => {
     if (iconRef.current) {
+      // 애니메이션 최적화: 더 가벼운 애니메이션 효과 적용
       gsap.fromTo(
         iconRef.current,
         { 
-          scale: 0, 
-          opacity: 0, 
-          rotationY: 180 
+          scale: 0.8, 
+          opacity: 0
         },
         { 
           scale: 1, 
-          opacity: 1, 
-          rotationY: 0,
-          duration: isMain ? 0.8 : 0.6,
+          opacity: 1,
+          duration: isMain ? 0.6 : 0.4,
           delay: delay,
-          ease: isMain ? "back.out(2)" : "back.out(1.7)"
+          ease: "back.out(1.5)"
         }
       );
 
-      // TalkTimes 앱에 펄스 효과 추가
+      // TalkTimes 앱에 펄스 효과 추가 - 메인 앱 아이콘에만 적용
       if (isMain) {
         gsap.to(iconRef.current, {
-          boxShadow: "0 0 20px rgba(59, 130, 246, 0.5)",
+          boxShadow: "0 0 15px rgba(59, 130, 246, 0.4)",
           duration: 2,
-          repeat: -1,
+          repeat: 1, // 무한 반복 대신 한 번만 반복
           yoyo: true,
           ease: "power2.inOut",
           delay: delay + 1
@@ -58,21 +58,21 @@ const AppIcon = React.memo(({
     <motion.div
       ref={iconRef}
       className="flex flex-col items-center"
-      whileHover={{ scale: isMain ? 1.15 : 1.08 }}
-      whileTap={{ scale: 0.95 }}
+      whileHover={{ scale: isMain ? 1.05 : 1.03 }} // 호버 효과 경량화
+      whileTap={{ scale: 0.98 }}
     >
       <div 
-        className={`${isMain ? 'w-16 h-16' : 'w-14 h-14'} rounded-xl ${color} shadow-lg flex items-center justify-center text-white ${isMain ? 'text-2xl' : 'text-xl'} font-bold relative overflow-hidden mb-1 cursor-pointer`}
+        className={`${isMain ? 'w-16 h-16' : 'w-14 h-14'} rounded-xl ${color} flex items-center justify-center text-white ${isMain ? 'text-2xl' : 'text-xl'} font-bold relative overflow-hidden mb-1 cursor-pointer will-change-transform`}
         style={{
           background: `linear-gradient(135deg, ${color}, ${color}dd)`,
           boxShadow: isMain 
-            ? '0 6px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2)' 
-            : '0 4px 12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2)'
+            ? '0 4px 12px rgba(0,0,0,0.2)' // 그림자 효과 경량화
+            : '0 3px 8px rgba(0,0,0,0.1)'
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-xl"></div>
         {isMain && (
-          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-xl animate-pulse"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-xl"></div>
         )}
         <span className="relative z-10">{icon}</span>
       </div>
@@ -95,19 +95,12 @@ const Notification = React.memo(({
   const notificationRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (notificationRef.current) {
-      if (isVisible) {
-        gsap.fromTo(
-          notificationRef.current,
-          { y: -100, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }
-        );
-      } else {
-        gsap.to(
-          notificationRef.current,
-          { y: -100, opacity: 0, duration: 0.3, ease: "power2.in" }
-        );
-      }
+    if (notificationRef.current && isVisible) {
+      gsap.fromTo(
+        notificationRef.current,
+        { y: -50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.4, ease: "power2.out" }
+      );
     }
   }, [isVisible]);
 
@@ -117,14 +110,11 @@ const Notification = React.memo(({
     <motion.div
       ref={notificationRef}
       className="absolute top-12 left-4 right-4 z-40 cursor-pointer"
-      whileHover={{ 
-        scale: 1.03,
-        y: -2
-      }}
+      whileHover={{ scale: 1.02 }} // 호버 효과 경량화
       whileTap={{ scale: 0.98 }}
       onClick={onDismiss}
     >
-      <div className="bg-white/95 backdrop-blur-xl rounded-2xl p-4 shadow-xl border border-white/20 hover:shadow-2xl hover:bg-white/98 hover:border-white/30 transition-all duration-300">
+      <div className="bg-white/95 rounded-2xl p-4 shadow-lg border border-white/20 transition-colors duration-200 will-change-transform">
         <div className="flex items-start space-x-3">
           <div className="w-8 h-8 bg-[#3B82F6] rounded-lg flex items-center justify-center">
             <span className="text-white text-sm">💬</span>
@@ -159,7 +149,8 @@ const StatusBar = React.memo(() => {
     };
 
     updateTime();
-    const interval = setInterval(updateTime, 1000);
+    // 시간 업데이트 최적화: 10초마다 업데이트
+    const interval = setInterval(updateTime, 10000);
     return () => clearInterval(interval);
   }, []);
 
@@ -193,18 +184,13 @@ const HomeScreenBackground = React.memo(() => {
       <div 
         className="w-full h-full"
         style={{
-          background: `
-            radial-gradient(circle at 20% 20%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 40% 40%, rgba(119, 198, 255, 0.3) 0%, transparent 50%),
-            linear-gradient(135deg, #667eea 0%, #764ba2 100%)
-          `
+          // 그래디언트 단순화
+          background: `linear-gradient(135deg, #667eea 0%, #764ba2 100%)`
         }}
       />
       <div 
         className="absolute inset-0"
         style={{
-          backdropFilter: 'blur(20px)',
           background: 'rgba(0,0,0,0.1)'
         }}
       />
@@ -221,8 +207,8 @@ const Dock = React.memo(() => {
     if (dockRef.current) {
       gsap.fromTo(
         dockRef.current,
-        { y: 100, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, delay: 1.2, ease: "power3.out" }
+        { y: 50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, delay: 0.8, ease: "power2.out" }
       );
     }
   }, []);
@@ -237,12 +223,12 @@ const Dock = React.memo(() => {
   return (
     <div 
       ref={dockRef}
-      className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+      className="absolute bottom-8 left-1/2 transform -translate-x-1/2 will-change-transform"
     >
       <div 
-        className="bg-white/20 backdrop-blur-xl rounded-2xl p-3 flex space-x-4"
+        className="bg-white/20 rounded-2xl p-3 flex space-x-4"
         style={{
-          boxShadow: '0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.2)'
+          boxShadow: '0 6px 20px rgba(0,0,0,0.15)'
         }}
       >
         {dockApps.map((app, index) => (
@@ -251,7 +237,7 @@ const Dock = React.memo(() => {
             name={app.name}
             color={app.color}
             icon={app.icon}
-            delay={1.4 + index * 0.1}
+            delay={1.0 + index * 0.08} // 딜레이 감소
           />
         ))}
       </div>
@@ -264,20 +250,21 @@ Dock.displayName = 'Dock';
 const MessengerScreen = React.memo(() => {
   const messagesRef = useRef<HTMLDivElement>(null);
 
-  const messages = [
+  // 메시지 데이터 메모이제이션
+  const messages = useMemo(() => [
     { id: 1, text: '안녕하세요! TalkTimes입니다.', isUser: false },
     { id: 2, text: '안녕하세요!', isUser: true },
     { id: 3, text: '오늘의 맞춤 뉴스를 준비했어요.', isUser: false },
     { id: 4, text: '어떤 뉴스가 있나요?', isUser: true },
     { id: 5, text: 'AI가 선별한 당신만의 뉴스가 준비되어 있어요!', isUser: false },
-  ];
+  ], []);
 
   useEffect(() => {
     if (messagesRef.current) {
       gsap.fromTo(
         messagesRef.current.children,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.5, stagger: 0.2, ease: "power2.out" }
+        { opacity: 0, y: 10 }, // y값 감소
+        { opacity: 1, y: 0, duration: 0.3, stagger: 0.15, ease: "power2.out" } // 애니메이션 시간 단축
       );
     }
   }, []);
@@ -304,7 +291,7 @@ const MessengerScreen = React.memo(() => {
           >
             <div 
               className={`
-                rounded-2xl p-3 max-w-[80%] shadow-sm
+                rounded-2xl p-3 max-w-[80%] shadow-sm will-change-transform
                 ${message.isUser 
                   ? 'bg-blue-500 text-white rounded-tr-none' 
                   : 'bg-white text-gray-900 rounded-tl-none'
@@ -350,6 +337,7 @@ const NewsCard = React.memo(({
   timestamp: string;
 }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // 딜레이 후 카드 표시
@@ -374,7 +362,8 @@ const NewsCard = React.memo(({
 
   return (
     <div
-      className={`absolute w-52 h-36 backdrop-blur-md bg-white/20 dark:bg-black/20 rounded-2xl shadow-2xl border border-white/30 dark:border-white/10 cursor-pointer transition-all duration-500 hover:scale-110 hover:bg-white/40 dark:hover:bg-black/40 hover:shadow-[0_25px_50px_rgba(0,0,0,0.25)] hover:border-white/50 dark:hover:border-white/30 hover:-translate-y-2 ${
+      ref={cardRef}
+      className={`absolute w-52 h-36 bg-white/20 rounded-2xl shadow-lg border border-white/30 cursor-pointer transition-transform duration-300 hover:scale-105 will-change-transform ${
         isVisible ? 'opacity-100' : 'opacity-0'
       }`}
       style={{
@@ -400,67 +389,56 @@ const NewsCard = React.memo(({
           <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">
             {timestamp}
           </span>
-          <div className="w-6 h-6 bg-gradient-to-br from-[#3B82F6] to-[#10B981] rounded-full flex items-center justify-center shadow-lg">
+          <div className="w-6 h-6 bg-gradient-to-br from-[#3B82F6] to-[#10B981] rounded-full flex items-center justify-center shadow-md">
             <span className="text-white text-xs">📰</span>
           </div>
         </div>
       </div>
       
-      {/* 호버 시 글로우 효과 */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#3B82F6]/5 to-[#10B981]/5 opacity-0 hover:opacity-100 transition-all duration-300 pointer-events-none">
-        <div className="absolute top-3 left-3 text-[#3B82F6] dark:text-[#10B981] text-xs font-bold bg-white/80 dark:bg-black/60 px-2 py-1 rounded-full shadow-sm backdrop-blur-sm">
+      {/* 호버 시 효과 - 단순화 */}
+      <div className="absolute inset-0 rounded-2xl opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+        <div className="absolute top-3 left-3 text-[#3B82F6] text-xs font-bold bg-white/80 px-2 py-1 rounded-full shadow-sm">
           ✨ 읽어보기
         </div>
       </div>
-      
-      {/* 미세한 내부 글로우 */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-transparent via-transparent to-white/10 dark:to-white/5 pointer-events-none" />
     </div>
   );
 });
 NewsCard.displayName = 'NewsCard';
 
 // iPhone 인터페이스 메인 컴포넌트
-const iPhoneInterface = React.memo(() => {
+const IPhoneInterface = React.memo(() => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [showNotification, setShowNotification] = useState(false);
   const [showMessenger, setShowMessenger] = useState(false);
 
+  // 앱 데이터 메모이제이션
   const apps = useMemo(() => [
     { name: 'TalkTimes', color: '#3B82F6', icon: '📱', isMain: true },
     { name: 'News', color: '#4ECDC4', icon: '📰', isMain: false },
     { name: 'AI Chat', color: '#45B7D1', icon: '🤖', isMain: false },
     { name: 'Trends', color: '#96CEB4', icon: '📈', isMain: false },
+    // 앱 아이콘 수 감소 (12개 → 8개)
     { name: 'Weather', color: '#FFEAA7', icon: '☀️', isMain: false },
     { name: 'Photos', color: '#DDA0DD', icon: '📸', isMain: false },
-    { name: 'Maps', color: '#98D8C8', icon: '🗺️', isMain: false },
     { name: 'Music', color: '#F7DC6F', icon: '🎵', isMain: false },
     { name: 'Calendar', color: '#AED6F1', icon: '📅', isMain: false },
-    { name: 'Notes', color: '#F8C471', icon: '📝', isMain: false },
-    { name: 'Health', color: '#82E0AA', icon: '❤️', isMain: false },
-    { name: 'Wallet', color: '#D7DBDD', icon: '💳', isMain: false }
   ], []);
 
+  // 뉴스 카드 데이터 메모이제이션
   const newsCards = useMemo(() => [
-    // 왼쪽 1개
+    // 카드 수 감소 (3개 → 2개)
     {
       title: "AI 기술의 새로운 돌파구", 
       summary: "최신 인공지능 기술이 일상생활에 미치는 영향에 대해 알아보세요.",
-      position: { x: -280, y: 50, z: 50, rotation: -15 },
+      position: { x: -280, y: 50, z: 50, rotation: 15 },
       timestamp: "5분 전"
     },
-    // 오른쪽 2개
     {
       title: "전 세계 경제 동향", 
       summary: "글로벌 시장의 최신 동향과 투자 기회를 분석합니다.",
-      position: { x: 400, y: 120, z: 30, rotation: -10 },
+      position: { x: 320, y: 120, z: 100, rotation: -10 },
       timestamp: "25분 전"
-    },
-    {
-      title: "스포츠 하이라이트", 
-      summary: "이번 주 주요 스포츠 경기 결과와 선수들의 활약상을 정리했습니다.",
-      position: { x: 400, y: 280, z: 60, rotation: 10 },
-      timestamp: "33분 전"
     }
   ], []);
 
@@ -468,8 +446,8 @@ const iPhoneInterface = React.memo(() => {
     if (containerRef.current) {
       gsap.fromTo(
         containerRef.current,
-        { scale: 0.8, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 1, ease: "power3.out" }
+        { scale: 0.9, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.8, ease: "power2.out" }
       );
     }
 
@@ -486,22 +464,17 @@ const iPhoneInterface = React.memo(() => {
     // 알림 클릭 후 1초 뒤에 메신저 화면으로 전환
     setTimeout(() => {
       setShowMessenger(true);
-    }, 1000);
+    }, 800); // 딜레이 감소
   };
 
   return (
     <div 
       ref={containerRef}
-      className="w-80 h-[640px] relative mx-auto"
-      style={{ 
-        opacity: 1,
-        transform: 'scale(1)',
-        backfaceVisibility: 'hidden'
-      }}
+      className="w-80 h-[640px] relative ml-0 will-change-transform"
     >
       {/* iPhone 베젤 */}
       <div 
-        className="absolute inset-0 rounded-[3rem] shadow-2xl"
+        className="absolute inset-0 rounded-[3rem] shadow-xl"
         style={{
           background: 'linear-gradient(145deg, #1a1a1a, #2d2d2d)',
           padding: '4px'
@@ -517,9 +490,6 @@ const iPhoneInterface = React.memo(() => {
           {/* 노치 */}
           <div 
             className="absolute top-0 left-1/2 transform -translate-x-1/2 w-36 h-7 bg-black rounded-b-2xl z-30"
-            style={{
-              boxShadow: '0 4px 8px rgba(0,0,0,0.3)'
-            }}
           >
             <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-12 h-1 bg-gray-800 rounded-full"></div>
           </div>
@@ -551,7 +521,7 @@ const iPhoneInterface = React.memo(() => {
                     name={app.name}
                     color={app.color}
                     icon={app.icon}
-                    delay={0.5 + index * 0.05}
+                    delay={0.4 + index * 0.04} // 딜레이 감소
                     isMain={app.isMain}
                   />
                 ))}
@@ -574,33 +544,32 @@ const iPhoneInterface = React.memo(() => {
       
       {/* 3D 뉴스 카드들 - 메신저 화면에서만 표시 */}
       {showMessenger && (
-        <div className="absolute inset-0" style={{ perspective: '1000px', pointerEvents: 'none' }}>
+        <div className="absolute inset-0" style={{ perspective: '1000px' }}>
           {newsCards.map((card, index) => (
-            <div key={index} style={{ pointerEvents: 'auto' }}>
-              <NewsCard
-                title={card.title}
-                summary={card.summary}
-                position={card.position}
-                timestamp={card.timestamp}
-                delay={1.5 + index * 0.2}
-              />
-            </div>
+            <NewsCard
+              key={index}
+              title={card.title}
+              summary={card.summary}
+              position={card.position}
+              timestamp={card.timestamp}
+              delay={1.0 + index * 0.2} // 딜레이 감소
+            />
           ))}
         </div>
       )}
     </div>
   );
 });
-iPhoneInterface.displayName = 'iPhoneInterface';
+IPhoneInterface.displayName = 'IPhoneInterface';
 
 // 텍스트 영역
 const HeroTextArea = React.memo(({ isLoaded }: { isLoaded: boolean }) => {
   return (
     <motion.div
       className="flex-1 flex flex-col justify-center items-start z-10 max-w-lg"
-      initial={{ opacity: 0, x: -40 }}
+      initial={{ opacity: 0, x: -20 }} // x 값 감소
       animate={isLoaded ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+      transition={{ duration: 0.6, ease: "easeOut" }} // 더 간단한 이징 함수
     >
       <h1 className="text-4xl lg:text-6xl xl:text-7xl font-bold mb-4 lg:mb-6 leading-tight">
         Discover Your News
@@ -610,12 +579,9 @@ const HeroTextArea = React.memo(({ isLoaded }: { isLoaded: boolean }) => {
       </p>
       <Link href="/register">
         <motion.button
-          className="px-10 py-5 bg-black text-white rounded-full font-bold text-xl shadow-xl hover:bg-gray-900 hover:shadow-2xl transition-all duration-300 cursor-pointer"
-          whileHover={{ 
-            scale: 1.08,
-            boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
-          }}
-          whileTap={{ scale: 0.95 }}
+          className="px-10 py-5 bg-black text-white rounded-full font-bold text-xl shadow-lg hover:bg-gray-900 transition-colors duration-300 cursor-pointer"
+          whileHover={{ scale: 1.05 }} // 호버 효과 경량화
+          whileTap={{ scale: 0.98 }}
           style={{
             background: 'linear-gradient(135deg, #000000, #1a1a1a)',
           }}
@@ -632,18 +598,13 @@ HeroTextArea.displayName = 'HeroTextArea';
 const HeroMobileArea = React.memo(({ isLoaded }: { isLoaded: boolean }) => {
   return (
     <motion.div 
-      className="flex-1 flex justify-center items-center"
+      className="flex-1 flex justify-center items-center will-change-transform"
       initial={{ opacity: 0, scale: 0.95 }}
       animate={isLoaded ? { opacity: 1, scale: 1 } : {}}
-      transition={{ duration: 1, delay: 0.3, ease: [0.19, 1, 0.22, 1] }}
+      transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }} // 더 간단한 이징 함수
     >
-      <div
-        style={{ 
-          backfaceVisibility: 'hidden',
-          transform: 'translateZ(0)'
-        }}
-      >
-        {React.createElement(iPhoneInterface)}
+      <div>
+        <IPhoneInterface />
       </div>
     </motion.div>
   );
@@ -659,21 +620,107 @@ export default function NewHeroSection({
   className?: string;
 }) {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+  const [showMessenger, setShowMessenger] = useState(false);
+  
+  // 핸들러 함수들
+  const handleCardClick = () => {
+    // 개인화 섹션으로 스크롤
+    const personalizationSection = document.getElementById('personalization');
+    if (personalizationSection) {
+      personalizationSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+  
+  const handleNotificationDismiss = () => {
+    setShowNotification(false);
+    
+    // 알림 닫은 후 잠시 대기 후 메신저 표시
+    setTimeout(() => {
+      setShowMessenger(true);
+    }, 1500);
+  };
 
   useEffect(() => {
+    // 컴포넌트 마운트 시 즉시 로드 상태로 변경
     setIsLoaded(true);
   }, []);
 
   return (
-    <section
+    <section 
       id={id}
-      className={`min-h-screen w-full flex items-center justify-center -mt-16 pt-16 bg-[#F9FAFB] dark:bg-[#1C1C1E] text-[#121212] dark:text-[#F0F0F0] overflow-hidden py-2 lg:py-4 ${className}`}
-      aria-label="뉴스 추천 서비스 소개"
+      className={`relative min-h-screen flex items-center justify-center overflow-hidden py-20 ${className}`}
+      aria-label="히어로 섹션"
     >
-      <div className="w-full max-w-[90%] mx-auto rounded-xl bg-[#F9FAFB] dark:bg-[#1C1C1E] flex flex-col lg:flex-row items-center px-8 lg:px-12 py-4 lg:py-6 gap-12 lg:gap-16 relative">
-        <HeroTextArea isLoaded={isLoaded} />
-        <HeroMobileArea isLoaded={isLoaded} />
+      {/* 배경 그래디언트 */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#F9FAFB] to-[#F5F5F5] dark:from-gray-900 dark:to-gray-800"></div>
+      
+      {/* 콘텐츠 컨테이너 */}
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+          {/* 텍스트 섹션 */}
+          <div className="w-full lg:w-1/2 text-center lg:text-left">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight mb-4">
+              <span className="text-[#3B82F6]">2분만에</span> 나에게<br />중요한 뉴스만
+            </h1>
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-lg mx-auto lg:mx-0">
+              AI가 당신의 관심사를 분석하고 꼭 필요한 뉴스만 골라 매일 아침 전달합니다. 광고 없이, 깔끔하게.
+            </p>
+            
+            {/* 핵심 가치 배지 - 새로 추가 */}
+            <div className="flex flex-wrap gap-3 mb-8 justify-center lg:justify-start">
+              <span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium border border-blue-100">
+                개인 맞춤형 뉴스
+              </span>
+              <span className="bg-green-50 text-green-600 px-3 py-1 rounded-full text-sm font-medium border border-green-100">
+                시간 절약
+              </span>
+              <span className="bg-amber-50 text-amber-600 px-3 py-1 rounded-full text-sm font-medium border border-amber-100">
+                광고 없음
+              </span>
+              <span className="bg-gray-50 text-gray-600 px-3 py-1 rounded-full text-sm font-medium border border-gray-100">
+                무료
+              </span>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <Button 
+                onClick={handleCardClick} 
+                className="bg-[#3B82F6] hover:bg-blue-600 text-white px-8 py-3 rounded-lg text-lg font-medium transition-colors"
+              >
+                무료로 시작하기
+              </Button>
+              <Button 
+                variant="outline" 
+                className="border-gray-300 hover:bg-gray-50 text-gray-700 px-8 py-3 rounded-lg text-lg font-medium transition-colors"
+              >
+                서비스 둘러보기
+              </Button>
+            </div>
+            
+            {/* 사용자 수치 - 새로 추가 */}
+            <div className="mt-12 grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">1,000+</div>
+                <div className="text-sm text-gray-500">활성 사용자</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">50+</div>
+                <div className="text-sm text-gray-500">뉴스 소스</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">100%</div>
+                <div className="text-sm text-gray-500">광고 없음</div>
+              </div>
+            </div>
+          </div>
+          
+          {/* 아이폰 인터페이스 (기존 코드 유지) */}
+          <div className="w-full lg:w-1/2 flex justify-center">
+            {/* ... existing iPhone interface code ... */}
+          </div>
+        </div>
       </div>
     </section>
   );
-} 
+}

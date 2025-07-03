@@ -1,3 +1,5 @@
+'use client';
+
 import { TranslationService } from '@/app/services/translation/translation.service';
 import { Button } from '@/src/components/ui/button';
 import { Select } from '@/src/components/ui/select';

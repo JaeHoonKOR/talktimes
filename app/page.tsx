@@ -1,15 +1,14 @@
 import {
-  ContactSection,
-  CTASection,
-  NewFeaturesSection,
-  NewHeroSection,
-  NewsPreviewSection,
-  PersonalizationSection,
-  PricingSection,
-  ValuePropositionSection
+    ContactSection,
+    NewFeaturesSection,
+    NewHeroSection,
+    NewsPreviewSection,
+    PersonalizationSection,
+    ServiceValueSection
 } from './components/sections';
 // Three.js 기반 FeaturesSection을 제거하고 새로운 NewFeaturesSection 사용
 // import FeaturesSection from './components/sections/FeaturesSection';
+import FeedbackWidget from './components/FeedbackWidget';
 import { TranslationToggle } from './components/TranslationToggle';
 import { AISummary, NewsItem } from './types';
 
@@ -75,7 +74,7 @@ export default async function Home() {
   const summaryData = sampleSummaryData;
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-[#F9FAFB]">
       {/* 상단 번역 토글 */}
       <div className="absolute top-4 right-4 z-50">
         <TranslationToggle />
@@ -88,11 +87,7 @@ export default async function Home() {
       <NewFeaturesSection />
       
       {/* 개인화 설정 및 맞춤형 뉴스 섹션 */}
-      <section id="personalization" className="py-24 bg-white relative overflow-hidden" aria-label="개인화 설정 및 맞춤형 뉴스">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <PersonalizationSection />
-        </div>
-      </section>
+      <PersonalizationSection />
 
       {/* 뉴스레터 미리보기 섹션 */}
       <NewsPreviewSection 
@@ -100,17 +95,14 @@ export default async function Home() {
         summaryData={summaryData} 
       />
 
-      {/* 가치 제안 섹션 */}
-      <ValuePropositionSection />
-
-      {/* 가격 섹션 */}
-      <PricingSection />
-
-      {/* CTA 섹션 */}
-      <CTASection />
+      {/* 통합 서비스 가치 및 구독 섹션 */}
+      <ServiceValueSection />
 
       {/* 연락처/푸터 섹션 */}
       <ContactSection />
+      
+      {/* 피드백 위젯 */}
+      <FeedbackWidget />
     </main>
   );
 } 
