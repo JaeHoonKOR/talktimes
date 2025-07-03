@@ -7,14 +7,7 @@ export function middleware(request: NextRequest) {
   // Content Security Policy 설정
   response.headers.set(
     'Content-Security-Policy',
-    `default-src 'self'; 
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://t1.kakaocdn.net; 
-    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; 
-    img-src 'self' data: https://via.placeholder.com https://i.imgur.com https://imgur.com; 
-    font-src 'self' https://fonts.gstatic.com; 
-    connect-src 'self' https://api.jiksong.com;
-    frame-src 'self';
-    object-src 'none';`
+    `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://t1.kakaocdn.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://via.placeholder.com https://i.imgur.com https://imgur.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.jiksong.com; frame-src 'self'; object-src 'none';`
   );
   
   // 추가 보안 헤더 설정

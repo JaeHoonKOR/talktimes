@@ -1,0 +1,394 @@
+{
+  "project": {
+    "name": "JikSend - AI 기반 개인화 뉴스 서비스",
+    "description": "Next.js 기반의 AI 맞춤형 뉴스 큐레이션 서비스",
+    "version": "0.1.0",
+    "framework": "Next.js 15.3.0",
+    "typescript": "5.8.3",
+    "react": "19.0.0"
+  },
+  "architecture": {
+    "type": "App Router",
+    "rendering": "SSR + CSR",
+    "runtime": "nodejs",
+    "deployment": "standalone"
+  },
+  "design_system": {
+    "approach": "미니멀 디자인",
+    "colors": {
+      "background": {
+        "main": "#F9FAFB",
+        "section": "#F5F5F5",
+        "dark_main": "#1C1C1E",
+        "dark_section": "#2A2A2A"
+      },
+      "text": {
+        "primary": "#121212",
+        "secondary": "#4B5563",
+        "tertiary": "#9CA3AF",
+        "dark_primary": "#F0F0F0",
+        "dark_secondary": "#9CA3AF"
+      },
+      "surface": {
+        "card": "#FFFFFF",
+        "elevated": "#EFEFEF",
+        "dark_card": "#181818",
+        "dark_elevated": "#2C2C2E"
+      },
+      "accent": {
+        "primary": "#3B82F6",
+        "success": "#10B981",
+        "warning": "#F59E0B",
+        "error": "#EF4444",
+        "neutral": "#CBD5E1"
+      }
+    },
+    "accessibility": "WCAG 2.1 AA 기준 준수"
+  },
+  "main_structure": {
+    "entry_points": {
+      "root_layout": "app/layout.tsx",
+      "main_page": "app/page.tsx",
+      "middleware": "middleware.ts"
+    },
+    "key_directories": {
+      "components": "app/components/",
+      "api_routes": "app/api/",
+      "hooks": "app/hooks/",
+      "contexts": "app/contexts/",
+      "types": "app/types/",
+      "constants": "app/constants/",
+      "services": "app/services/",
+      "ui_components": "src/components/ui/"
+    }
+  },
+  "page_flow": {
+    "landing_page_sections": [
+      "NewHeroSection",
+      "NewFeaturesSection", 
+      "PersonalizationSection",
+      "NewsPreviewSection",
+      "ServiceValueSection",
+      "ContactSection"
+    ],
+    "auth_pages": [
+      "login/page.tsx",
+      "register/page.tsx"
+    ],
+    "feature_pages": [
+      "translation/page.tsx"
+    ]
+  },
+  "components": {
+    "layout": {
+      "Navbar": {
+        "file": "app/components/Navbar.tsx",
+        "purpose": "고정 네비게이션 바, 모바일 반응형",
+        "features": ["로고", "메뉴", "인증 버튼", "모바일 햄버거 메뉴"]
+      },
+      "SkipNavigation": {
+        "file": "app/components/SkipNavigation.tsx",
+        "purpose": "접근성을 위한 스킵 네비게이션"
+      }
+    },
+    "sections": {
+      "NewHeroSection": {
+        "file": "app/components/sections/NewHeroSection.tsx",
+        "purpose": "메인 히어로 섹션 (726라인)",
+        "features": ["통계 표시", "CTA 버튼", "애니메이션"]
+      },
+      "NewFeaturesSection": {
+        "file": "app/components/sections/NewFeaturesSection.tsx", 
+        "purpose": "서비스 특징 소개 섹션 (653라인)",
+        "features": ["Framer Motion", "GSAP 애니메이션"]
+      },
+      "PersonalizationSection": {
+        "file": "app/components/sections/PersonalizationSection.tsx",
+        "purpose": "개인화 설정 섹션 (440라인)",
+        "features": ["키워드 관리", "토픽 선택", "맞춤형 뉴스 설정"]
+      },
+      "NewsPreviewSection": {
+        "file": "app/components/sections/NewsPreviewSection.tsx",
+        "purpose": "뉴스 미리보기 섹션 (102라인)",
+        "features": ["샘플 뉴스 표시", "AI 요약"]
+      },
+      "ServiceValueSection": {
+        "file": "app/components/sections/ServiceValueSection.tsx",
+        "purpose": "서비스 가치 제안 섹션 (315라인)",
+        "features": ["가격 정보", "구독 혜택"]
+      },
+      "ContactSection": {
+        "file": "app/components/sections/ContactSection.tsx",
+        "purpose": "연락처 및 푸터 섹션 (128라인)"
+      }
+    },
+    "feature_components": {
+      "KeywordManager": {
+        "file": "app/components/KeywordManager.tsx",
+        "purpose": "키워드 관리 컴포넌트",
+        "data_flow": "onSettingsComplete 콜백으로 PersonalizationSection과 연결"
+      },
+      "NewsPreview": {
+        "file": "app/components/NewsPreview.tsx",
+        "purpose": "뉴스 미리보기 카드 컴포넌트"
+      },
+      "TopicSelector": {
+        "file": "app/components/TopicSelector.tsx",
+        "purpose": "토픽 선택 컴포넌트"
+      },
+      "TranslationToggle": {
+        "file": "app/components/TranslationToggle.tsx",
+        "purpose": "번역 기능 토글 버튼"
+      },
+      "FeedbackWidget": {
+        "file": "app/components/FeedbackWidget.tsx",
+        "purpose": "사용자 피드백 위젯"
+      }
+    },
+    "auth_components": {
+      "LoginForm": "app/components/auth/LoginForm.tsx",
+      "RegisterForm": "app/components/auth/RegisterForm.tsx", 
+      "SocialLoginButtons": "app/components/auth/SocialLoginButtons.tsx"
+    },
+    "ui_components": {
+      "button": "src/components/ui/button.tsx",
+      "card": "src/components/ui/card.tsx",
+      "input": "src/components/ui/input.tsx",
+      "select": "src/components/ui/select.tsx",
+      "badge": "src/components/ui/badge.tsx",
+      "alert": "src/components/ui/alert.tsx",
+      "skeleton": "src/components/ui/skeleton.tsx",
+      "textarea": "src/components/ui/textarea.tsx"
+    }
+  },
+  "state_management": {
+    "contexts": {
+      "PersonalizationContext": {
+        "file": "app/contexts/PersonalizationContext.tsx",
+        "purpose": "사용자 개인화 설정 상태 관리",
+        "state_properties": [
+          "keywords: Keyword[]",
+          "selectedTopics: Topic[]", 
+          "isPersonalized: boolean",
+          "readingLevel: 'basic' | 'intermediate' | 'advanced'",
+          "preferredLanguage: string",
+          "newsFrequency: 'daily' | 'weekly' | 'realtime'",
+          "lastUpdated: string | null"
+        ],
+        "storage": "localStorage",
+        "storage_key": "jiksend_personalization_settings"
+      }
+    },
+    "providers": {
+      "Providers": {
+        "file": "app/components/Providers.tsx", 
+        "purpose": "전역 프로바이더 래퍼"
+      },
+      "AnalyticsProvider": {
+        "file": "app/components/AnalyticsProvider.tsx",
+        "purpose": "분석 이벤트 추적"
+      }
+    }
+  },
+  "hooks": {
+    "usePersonalizedNews": {
+      "file": "app/hooks/usePersonalizedNews.ts",
+      "purpose": "개인화 뉴스 데이터 관리",
+      "return_type": "PersonalizedNewsState & methods",
+      "key_methods": [
+        "fetchNewsWithKeywords(keywords: Keyword[])",
+        "refreshNews()"
+      ],
+      "data_flow": "PersonalizedNewsSection과 연결"
+    },
+    "useTranslation": {
+      "file": "app/hooks/useTranslation.ts", 
+      "purpose": "번역 기능 관리",
+      "features": ["인증된 사용자 vs 공개 API", "단일 텍스트 번역", "배치 번역"],
+      "api_endpoints": [
+        "/api/translation/text",
+        "/api/translation/public/text",
+        "/api/translation/batch",
+        "/api/translation/public/batch"
+      ]
+    }
+  },
+  "api_routes": {
+    "personalized_news": {
+      "file": "app/api/personalized-news/route.ts",
+      "methods": ["GET", "POST"],
+      "purpose": "맞춤형 뉴스 API",
+      "backend_connection": {
+        "url": "BACKEND_URL 환경변수",
+        "enable_flag": "ENABLE_BACKEND",
+        "timeout": "15초",
+        "fallback": "로컬 샘플 데이터"
+      }
+    },
+    "auth": {
+      "nextauth": "app/api/auth/[...nextauth]/route.ts",
+      "auth_config": "app/api/auth.ts"
+    },
+    "translation": {
+      "text": "app/api/translation/text/route.ts",
+      "batch": "app/api/translation/batch/route.ts",
+      "public_text": "app/api/translation/public/text/route.ts",
+      "public_batch": "app/api/translation/public/batch/route.ts"
+    },
+    "keywords": {
+      "base": "app/api/keywords/route.ts",
+      "by_id": "app/api/keywords/[id]/route.ts"
+    },
+    "news_data": "app/api/news-data/route.ts"
+  },
+  "types": {
+    "main_types_file": "app/types/index.ts",
+    "core_interfaces": {
+      "Keyword": {
+        "properties": ["id?: number | string", "keyword: string", "category: string"]
+      },
+      "Topic": {
+        "properties": ["title: string", "icon: React.ReactNode"]
+      },
+      "NewsItem": {
+        "properties": [
+          "id: string",
+          "title: string", 
+          "excerpt: string",
+          "category: string",
+          "imageUrl?: string",
+          "publishedAt: string",
+          "source: string",
+          "matchingKeywords?: string[]"
+        ]
+      },
+      "AISummary": {
+        "properties": [
+          "id: string",
+          "title: string",
+          "summary: string", 
+          "category: string",
+          "publishedAt: string",
+          "source: string",
+          "originalUrl?: string"
+        ]
+      },
+      "PersonalizedNewsState": {
+        "properties": [
+          "news: NewsItem[]",
+          "keywords: string[]",
+          "isLoading: boolean",
+          "error: string | null",
+          "message: string | null"
+        ]
+      }
+    },
+    "sections_types": "app/types/sections.ts"
+  },
+  "constants": {
+    "landing": {
+      "file": "app/constants/landing.tsx",
+      "includes": [
+        "HERO_STATS",
+        "NEWSLETTER_FEATURES", 
+        "TESTIMONIALS",
+        "TRUST_INDICATORS",
+        "NEWS_SOURCES",
+        "PIPELINE_STEPS"
+      ]
+    },
+    "keywords": "app/constants/keywords.ts",
+    "topics": "app/constants/topics.tsx",
+    "background_icons": "app/constants/backgroundIcons.ts"
+  },
+  "styling": {
+    "framework": "Tailwind CSS 4",
+    "config": "postcss.config.mjs",
+    "global_styles": "app/globals.css",
+    "ui_library": "shadcn/ui + Radix UI"
+  },
+  "dependencies": {
+    "ui_animation": ["framer-motion@12.17.0", "gsap@3.13.0"],
+    "auth": ["next-auth@4.24.11", "@react-oauth/google@0.12.1"],
+    "http": ["axios@1.9.0"],
+    "utilities": [
+      "clsx@2.1.1",
+      "tailwind-merge@3.2.0", 
+      "lodash-es@4.17.21",
+      "lucide-react@0.501.0"
+    ],
+    "3d_graphics": ["three@0.177.0", "@react-three/fiber@9.1.2", "@react-three/drei@10.2.0"],
+    "performance": ["react-window@1.8.11", "react-intersection-observer@9.16.0"]
+  },
+  "configuration": {
+    "next_config": {
+      "file": "next.config.mjs",
+      "key_settings": {
+        "output": "standalone",
+        "typescript": "ignoreBuildErrors: true",
+        "images": "remotePatterns + optimization",
+        "experimental": ["optimizeCss", "scrollRestoration"]
+      }
+    },
+    "typescript": {
+      "file": "tsconfig.json",
+      "target": "ES2017",
+      "paths": {"@/*": ["./src/*"]}
+    },
+    "eslint": "eslint.config.mjs",
+    "components_json": "components.json"
+  },
+  "performance_optimizations": {
+    "PersonalizationSection": {
+      "applied": [
+        "이모지를 SVG 아이콘으로 대체",
+        "과도한 그림자 효과와 backdrop-blur 제거", 
+        "불필요한 애니메이션 효과 최소화",
+        "will-change-transform 속성으로 GPU 가속",
+        "불필요한 여백과 패딩 축소"
+      ],
+      "results": {
+        "render_time": "350ms → 120ms",
+        "layout_shift": "0.12 → 0.05"
+      }
+    }
+  },
+  "data_flow": {
+    "personalization_flow": [
+      "사용자가 PersonalizationSection에서 키워드/토픽 선택",
+      "KeywordManager에서 onSettingsComplete 콜백 호출",
+      "PersonalizationContext에 상태 저장 (localStorage)",
+      "usePersonalizedNews 훅이 fetchNewsWithKeywords 실행",
+      "/api/personalized-news POST 요청",
+      "백엔드 연결 또는 폴백 데이터 반환",
+      "NewsPreviewSection에서 결과 표시"
+    ],
+    "translation_flow": [
+      "사용자가 TranslationToggle 클릭",
+      "useTranslation 훅에서 translateText/translateBatch 호출",
+      "인증 상태에 따라 다른 API 엔드포인트 사용",
+      "번역 결과를 컴포넌트에 반영"
+    ]
+  },
+  "sample_data": {
+    "news_fallback": "app/api/personalized-news/route.ts 내 fallbackNews 배열",
+    "hero_stats": "app/constants/landing.tsx 내 HERO_STATS",
+    "news_sources": "50+ 국내외 주요 언론사 목록"
+  },
+  "key_features": {
+    "personalization": "AI 기반 키워드 및 토픽 맞춤화",
+    "translation": "실시간 다국어 번역 지원", 
+    "responsive_design": "모바일 우선 반응형 디자인",
+    "accessibility": "WCAG 2.1 AA 기준 준수",
+    "performance": "최적화된 렌더링 및 로딩",
+    "auth_integration": "NextAuth.js + 소셜 로그인",
+    "backend_fallback": "백엔드 연결 실패 시 폴백 데이터"
+  },
+  "development_notes": {
+    "file_organization": "기능별 폴더 구조, 명확한 네이밍 컨벤션",
+    "component_patterns": "재사용 가능한 컴포넌트, Props 타입 명시",
+    "error_handling": "API 오류 처리, 사용자 친화적 메시지",
+    "analytics": "개발 환경에서 이벤트 로깅",
+    "caching": "API 응답 캐싱, localStorage 활용"
+  }
+} 

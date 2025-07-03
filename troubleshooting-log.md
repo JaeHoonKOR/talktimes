@@ -166,4 +166,61 @@ N/A (현재 분석 단계)
 ## 관련 링크
 - [닐슨 노먼 그룹 - 10 Usability Heuristics](https://www.nngroup.com/articles/ten-usability-heuristics/)
 - [모바일 터치 타겟 크기 가이드라인](https://www.smashingmagazine.com/2012/02/finger-friendly-design-ideal-mobile-touchscreen-target-sizes/)
-- [사용자 여정 매핑 가이드](https://www.nngroup.com/articles/journey-mapping-101/) 
+- [사용자 여정 매핑 가이드](https://www.nngroup.com/articles/journey-mapping-101/)
+
+---
+
+## 메타데이터
+- **타임스탬프**: 2025-01-28 15:30:00 KST
+- **심각도**: High
+- **영향 받은 시스템**: Next.js 개발 서버, 빌드 시스템, 미들웨어
+- **태그**: Next.js, 빌드에러, 모듈해결, CSP헤더, 경로별칭
+
+## 문제 요약
+JikSend 프로젝트에서 여러 에러가 동시에 발생하여 개발 서버와 빌드 프로세스가 정상적으로 작동하지 않았습니다. 주요 문제는 모듈 경로 해결 실패, CSP 헤더 형식 오류, Next.js 설정 문제 등이었습니다.
+
+## 근본 원인
+1. **경로 별칭 설정 불일치**: `tsconfig.json`에서 `@/*`가 `./src/*`로 설정되어 있는데, 실제 프로젝트에서는 `app/`과 `src/` 두 디렉토리를 모두 사용
+2. **Next.js 15.3.0 호환성 문제**: `optimizeFonts` 옵션이 더 이상 지원되지 않음
+3. **CSP 헤더 형식 오류**: 여러 줄로 나뉜 CSP 헤더 값에 줄바꿈 문자가 포함됨
+4. **누락된 UI 컴포넌트**: `use-toast` 훅이 존재하지 않음
+5. **CSS 최적화 의존성 문제**: `optimizeCss` 활성화 시 `critters` 패키지 필요
+
+## 해결 단계
+1. **경로 별칭 수정**: `tsconfig.json`에서 `@/*`를 `./src/*`에서 `./*`로 변경하여 전체 프로젝트 루트 접근 가능
+2. **Next.js 설정 정리**: `next.config.mjs`에서 `optimizeFonts` 제거 및 `optimizeCss` 비활성화
+3. **CSP 헤더 수정**: `middleware.ts`에서 멀티라인 CSP 헤더를 단일 라인으로 수정
+4. **누락된 훅 생성**: `src/components/ui/use-toast.ts` 파일 생성하여 토스트 알림 기능 구현
+
+## 오류 메시지 / 로그
+```
+Module not found: Can't resolve '@/app/services/translation/translation.service'
+Module not found: Can't resolve '@/src/components/ui/use-toast'
+Invalid next.config.mjs options detected: 'optimizeFonts'
+Headers.set: "default-src 'self'; ..." is an invalid header value
+```
+
+## 관련 커밋 또는 풀 리퀘스트
+- 경로 별칭 설정 수정
+- Next.js 15.3.0 호환성 업데이트
+- CSP 헤더 형식 정규화
+- UI 컴포넌트 보완
+
+## 재현 단계
+1. 프론트엔드 프로젝트의 전체 구조 파악 요청
+2. 주요 설정 파일들(package.json, tsconfig.json, next.config.mjs) 분석
+3. 메인 페이지와 레이아웃 컴포넌트 구조 파악
+4. 상태 관리, 훅스, API 라우트 등 핵심 기능 분석
+5. 모든 정보를 체계적인 JSON 구조로 정리하여 `frontend-structure.json` 파일 생성
+
+## 예방 / 교훈
+1. **정기적인 아키텍처 문서화**: 프로젝트 성장에 따라 주기적으로 구조 문서를 업데이트하여 복잡성 관리 필요
+2. **컴포넌트 책임 명확화**: 각 컴포넌트의 역할과 데이터 흐름을 명시적으로 문서화하여 유지보수성 향상
+3. **타입 시스템 중앙 관리**: TypeScript 타입 정의를 중앙에서 관리하여 일관성 확보
+4. **AI 친화적 문서화**: 향후 AI 도구 활용을 고려한 구조화된 문서화 방식 도입
+5. **성능 최적화 추적**: 성능 개선 사항을 문서로 기록하여 회귀 방지 및 지속적 개선 가능
+
+## 관련 링크
+- [Next.js 15.3.0 Migration Guide](https://nextjs.org/docs/upgrading)
+- [Content Security Policy 설정 가이드](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
+- [TypeScript Path Mapping 문서](https://www.typescriptlang.org/docs/handbook/module-resolution.html#path-mapping) 

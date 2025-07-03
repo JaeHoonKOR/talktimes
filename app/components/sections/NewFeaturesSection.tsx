@@ -1,6 +1,6 @@
 "use client";
 
-import { Card } from '@/components/ui/card';
+import { Card } from '@/src/components/ui/card';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import React, { useEffect, useRef } from 'react';

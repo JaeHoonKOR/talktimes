@@ -27,9 +27,7 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  optimizeFonts: true,
   experimental: {
-    optimizeCss: true,
     scrollRestoration: true,
   },
   poweredByHeader: false,

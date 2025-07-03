@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 
 // 이벤트 타입 정의
 export type AnalyticsEvent = {
@@ -52,8 +52,8 @@ export const trackUserAction = (action: string, category: string, label?: string
   });
 };
 
-// 분석 컨텍스트 제공자
-export default function AnalyticsProvider({ children }: { children: React.ReactNode }) {
+// 페이지 추적 컴포넌트 (useSearchParams 사용)
+function PageTracker() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   
@@ -68,7 +68,19 @@ export default function AnalyticsProvider({ children }: { children: React.ReactN
     }
   }, [pathname, searchParams]);
   
-  return <>{children}</>;
+  return null;
+}
+
+// 분석 컨텍스트 제공자
+export default function AnalyticsProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <Suspense fallback={null}>
+        <PageTracker />
+      </Suspense>
+      {children}
+    </>
+  );
 }
 
 // 사용자 피드백 수집 훅

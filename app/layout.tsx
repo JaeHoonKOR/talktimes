@@ -6,6 +6,7 @@ import SkipNavigation from './components/SkipNavigation'
 import './globals.css'
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://jiksong.com'),
   title: '뉴스직송 JikSong | AI 맞춤형 뉴스 큐레이션',
   description: '🚀 딱 당신 취향, 바로 도착! AI가 엄선한 맞춤형 뉴스를 매일 아침 직송해드립니다. 평생 무료, 광고 없음, 개인화 완벽.',
   keywords: '뉴스, 맞춤형 뉴스, AI 뉴스, 뉴스레터, 개인화, 뉴스 큐레이션, 뉴스직송, JikSong',
