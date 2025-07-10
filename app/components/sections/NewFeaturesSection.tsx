@@ -603,12 +603,12 @@ export function NewFeaturesSection({
             AI 기술로 당신만을 위한 뉴스를 선별하여 매일 아침 전달합니다
           </p>
         </div>
-      
+
         {/* 특징 카드 그리드 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 w-full">
           {features.map((feature, index) => (
             <Card 
-              key={index} 
+              key={`feature-card-${index}-${feature.title}`}
               className="h-72 flex flex-col overflow-hidden hover:shadow-lg transition-all duration-300 p-0 bg-white border border-[#E5E7EB] rounded-xl hover:scale-[1.02]"
             >
               {/* 시각적 콘텐츠 영역 - 70%, 여백 없음 */}

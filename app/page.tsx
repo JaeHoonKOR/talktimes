@@ -1,10 +1,10 @@
 import {
-    ContactSection,
-    NewFeaturesSection,
-    NewHeroSection,
-    NewsPreviewSection,
-    PersonalizationSection,
-    ServiceValueSection
+  ContactSection,
+  NewFeaturesSection,
+  NewHeroSection,
+  NewsPreviewSection,
+  PersonalizationSection,
+  ServiceValueSection
 } from './components/sections';
 // Three.js 기반 FeaturesSection을 제거하고 새로운 NewFeaturesSection 사용
 // import FeaturesSection from './components/sections/FeaturesSection';
@@ -74,7 +74,7 @@ export default async function Home() {
   const summaryData = sampleSummaryData;
 
   return (
-    <main className="min-h-screen bg-[#F9FAFB]">
+    <main className="min-h-screen bg-primary">
       {/* 상단 번역 토글 */}
       <div className="absolute top-4 right-4 z-50">
         <TranslationToggle />

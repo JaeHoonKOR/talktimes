@@ -6,20 +6,188 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* 기본 스타일 - 색상 규칙 적용 */
-body {
-  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background-color: #F9FAFB;
-  color: #121212;
-  overflow-x: hidden;
+/* ========================================
+   모더니즘 다크모드 색상 시스템
+   ======================================== */
+
+:root {
+  /* Light Mode Colors */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F8FAFC;
+  --bg-tertiary: #F1F5F9;
+  
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-tertiary: #64748B;
+  --text-disabled: #94A3B8;
+  
+  --border-subtle: #E2E8F0;
+  --border-default: #CBD5E1;
+  --border-strong: #94A3B8;
+  --border-focus: #3B82F6;
+  
+  --brand-primary: #3B82F6;
+  --brand-primary-hover: #2563EB;
+  --brand-success: #10B981;
+  --brand-warning: #F59E0B;
+  --brand-error: #EF4444;
+  --brand-info: #8B5CF6;
+  
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+  
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --overlay-bg: rgba(0, 0, 0, 0.5);
 }
 
-/* 다크 모드 지원 */
+/* Dark Mode Colors */
+.dark {
+  --bg-primary: #0A0A0B;
+  --bg-secondary: #1A1A1B;
+  --bg-tertiary: #2A2A2B;
+  
+  --text-primary: #FAFAFA;
+  --text-secondary: #D4D4D8;
+  --text-tertiary: #A1A1AA;
+  --text-disabled: #71717A;
+  
+  --border-subtle: #27272A;
+  --border-default: #3F3F46;
+  --border-strong: #52525B;
+  --border-focus: #60A5FA;
+  
+  --brand-primary: #60A5FA;
+  --brand-primary-hover: #3B82F6;
+  --brand-success: #34D399;
+  --brand-warning: #FBBF24;
+  --brand-error: #F87171;
+  --brand-info: #A78BFA;
+  
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6);
+  
+  --glass-bg: rgba(26, 26, 27, 0.8);
+  --glass-border: rgba(63, 63, 70, 0.3);
+  --overlay-bg: rgba(10, 10, 11, 0.8);
+}
+
 @media (prefers-color-scheme: dark) {
-  body {
-    background-color: #1C1C1E;
-    color: #F0F0F0;
+  :root {
+    --bg-primary: #0A0A0B;
+    --bg-secondary: #1A1A1B;
+    --bg-tertiary: #2A2A2B;
+    
+    --text-primary: #FAFAFA;
+    --text-secondary: #D4D4D8;
+    --text-tertiary: #A1A1AA;
+    --text-disabled: #71717A;
+    
+    --border-subtle: #27272A;
+    --border-default: #3F3F46;
+    --border-strong: #52525B;
+    --border-focus: #60A5FA;
+    
+    --brand-primary: #60A5FA;
+    --brand-primary-hover: #3B82F6;
+    --brand-success: #34D399;
+    --brand-warning: #FBBF24;
+    --brand-error: #F87171;
+    --brand-info: #A78BFA;
+    
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6);
+    
+    --glass-bg: rgba(26, 26, 27, 0.8);
+    --glass-border: rgba(63, 63, 70, 0.3);
+    --overlay-bg: rgba(10, 10, 11, 0.8);
   }
+}
+
+/* 기본 스타일 - CSS 변수 적용 */
+body {
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+              color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========================================
+   모더니즘 유틸리티 클래스
+   ======================================== */
+
+/* 배경 색상 */
+.bg-primary { background-color: var(--bg-primary); }
+.bg-secondary { background-color: var(--bg-secondary); }
+.bg-tertiary { background-color: var(--bg-tertiary); }
+
+/* 텍스트 색상 */
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
+.text-disabled { color: var(--text-disabled); }
+
+/* 브랜드 색상 */
+.text-brand { color: var(--brand-primary); }
+.text-success { color: var(--brand-success); }
+.text-warning { color: var(--brand-warning); }
+.text-error { color: var(--brand-error); }
+.text-info { color: var(--brand-info); }
+
+.bg-brand { background-color: var(--brand-primary); }
+.bg-success { background-color: var(--brand-success); }
+.bg-warning { background-color: var(--brand-warning); }
+.bg-error { background-color: var(--brand-error); }
+.bg-info { background-color: var(--brand-info); }
+
+/* 경계선 */
+.border-subtle { border-color: var(--border-subtle); }
+.border-default { border-color: var(--border-default); }
+.border-strong { border-color: var(--border-strong); }
+.border-focus { border-color: var(--border-focus); }
+
+/* 그림자 */
+.shadow-modern-sm { box-shadow: var(--shadow-sm); }
+.shadow-modern-md { box-shadow: var(--shadow-md); }
+.shadow-modern-lg { box-shadow: var(--shadow-lg); }
+.shadow-modern-xl { box-shadow: var(--shadow-xl); }
+
+/* 글래스 효과 */
+.glass-modern {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* 오버레이 */
+.overlay-modern {
+  background: var(--overlay-bg);
+}
+
+/* 호버 효과 */
+.hover-lift {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* 포커스 링 */
+.focus-ring {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--border-focus);
+  transition: box-shadow 0.15s ease;
 }
 
 html {

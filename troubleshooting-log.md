@@ -171,6 +171,61 @@ N/A (현재 분석 단계)
 ---
 
 ## 메타데이터
+- **타임스탬프**: 2025-01-28 16:45:00 KST
+- **심각도**: Medium
+- **영향 받은 시스템**: NewHeroSection 컴포넌트, 뉴스 카드 애니메이션, 사용자 경험
+- **태그**: React 상태관리, 애니메이션 깜빡임, 컴포넌트 리마운트, 타이밍 동기화
+
+## 문제 요약
+NewHeroSection에서 뉴스 카드가 채팅 완료 후 나타났다가 사라지는 깜빡임 현상이 발생했습니다. 메신저 화면과 뉴스 카드의 상태 관리가 중복되어 타이밍 충돌이 일어났습니다.
+
+## 근본 원인
+1. **상태 관리 중복**: 메인 컴포넌트와 IPhoneInterface 컴포넌트에서 동일한 상태(showMessenger, showCards)를 별도로 관리
+2. **컴포넌트 리마운트**: MessengerScreen 컴포넌트의 key 변경으로 인한 강제 리마운트
+3. **cleanup effect 문제**: MessengerScreen의 cleanup effect가 unmount 시 초기화 상태를 리셋하여 재마운트 시 깜빡임 발생
+4. **타이밍 동기화 실패**: 메인 컴포넌트와 자식 컴포넌트 간의 상태 변경 타이밍이 동기화되지 않음
+
+## 해결 단계
+1. **상태 관리 통합**: 메인 컴포넌트에서 모든 상태를 통합 관리하도록 수정
+2. **자식 컴포넌트 상태 제거**: IPhoneInterface에서 내부 상태 제거하고 props로 받도록 변경
+3. **핸들러 메모이제이션**: useCallback으로 핸들러 함수들을 메모이제이션하여 안정성 확보
+4. **cleanup effect 제거**: MessengerScreen에서 불필요한 cleanup effect 제거
+5. **타이밍 동기화**: 메인 컴포넌트에서 일관된 타이밍으로 상태 변경 관리
+
+## 오류 메시지 / 로그
+```
+React key duplication errors with keys like '1' and '7'
+News cards briefly appearing then disappearing and reappearing
+Flickering after chat completion
+```
+
+## 관련 커밋 또는 풀 리퀘스트
+- 상태 관리 통합 및 깜빡임 해결
+- IPhoneInterface 컴포넌트 props 기반 구조로 변경
+- MessengerScreen cleanup effect 제거
+
+## 재현 단계
+1. NewHeroSection 컴포넌트 로드
+2. 0.8초 후 알림 표시
+3. 알림 클릭 후 메신저 화면 표시
+4. 채팅 완료 후 뉴스 카드 등장
+5. 깜빡임 현상 관찰
+
+## 예방 / 교훈
+1. **단일 진실 공급원(Single Source of Truth)**: 상태는 가능한 한 최상위 컴포넌트에서 관리
+2. **Props 기반 구조**: 자식 컴포넌트는 가능한 한 props로 상태를 받도록 설계
+3. **메모이제이션 활용**: useCallback과 useMemo로 불필요한 리렌더링 방지
+4. **cleanup effect 신중 사용**: unmount 시 상태를 리셋하는 cleanup effect는 신중하게 사용
+5. **타이밍 동기화**: 여러 컴포넌트 간의 상태 변경은 일관된 타이밍으로 관리
+
+## 관련 링크
+- [React 상태 관리 모범 사례](https://react.dev/learn/managing-state)
+- [useCallback과 useMemo 최적화](https://react.dev/reference/react/useCallback)
+- [컴포넌트 리마운트 방지](https://react.dev/learn/preserving-and-resetting-state)
+
+---
+
+## 메타데이터
 - **타임스탬프**: 2025-01-28 15:30:00 KST
 - **심각도**: High
 - **영향 받은 시스템**: Next.js 개발 서버, 빌드 시스템, 미들웨어

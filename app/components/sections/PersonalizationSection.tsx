@@ -201,8 +201,8 @@ const PersonalizationSection = memo(({ className = '', id = 'personalization' }:
   }, [selectedKeywords, handleKeywordsUpdate, checkDuplicateKeyword]);
 
   return (
-    <section 
-      id={id} 
+    <section
+      id={id}
       className={`py-10 md:py-12 lg:py-16 bg-[#F9FAFB] ${className} min-h-[90vh] mb-24`}
       aria-label="개인 맞춤형 뉴스 설정"
     >
@@ -210,11 +210,11 @@ const PersonalizationSection = memo(({ className = '', id = 'personalization' }:
         <div className="text-center mb-6">
           <h2 className="text-2xl md:text-3xl font-medium text-[#121212] mb-2">
             나만의 <span className="text-[#3B82F6]">관심 주제</span>로 맞춤 뉴스 받기
-          </h2>
+            </h2>
           <p className="text-[#4B5563] max-w-xl mx-auto text-base">
             관심 있는 주제를 선택하면 AI가 당신에게 맞는 뉴스를 제공합니다
-          </p>
-        </div>
+            </p>
+          </div>
 
           {/* 로딩 오버레이 */}
           {isLoading && (
@@ -388,7 +388,7 @@ const PersonalizationSection = memo(({ className = '', id = 'personalization' }:
                   ))}
                 </div>
           </div>
-        </div>
+            </div>
 
             {/* 두 번째 행: 맞춤형 뉴스 받기 버튼 */}
             <div className="text-center py-8 my-4">

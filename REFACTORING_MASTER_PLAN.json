@@ -1,0 +1,178 @@
+{
+  "project": {
+    "name": "JikSend 리팩토링",
+    "duration_weeks": 8,
+    "team": ["senior_developer", "junior_developer"]
+  },
+  "current_issues": {
+    "performance": "First Load JS 263KB (목표: 200KB)",
+    "components": {
+      "NewHeroSection": "726줄 → 150줄",
+      "NewFeaturesSection": "653줄 → 150줄",
+      "PersonalizationSection": "440줄 → 200줄"
+    },
+    "problems": [
+      "대형 컴포넌트 존재",
+      "복잡한 상태 관리",
+      "애니메이션 라이브러리 중복",
+      "테스트 코드 부재"
+    ]
+  },
+  "goals": {
+    "first_load_js": "200KB 이하",
+    "component_size": "평균 150줄 이하",
+    "typescript_coverage": "95% 이상",
+    "test_coverage": "80% 이상",
+    "seo_optimization": "Lighthouse SEO 90점 이상",
+    "accessibility": "WCAG 2.1 AA 준수",
+    "design_system": "체계적인 디자인 시스템 구축"
+  },
+  "phases": [
+    {
+      "name": "기반 설정",
+      "weeks": [1, 2],
+      "tasks": [
+        "Bundle Analyzer + Storybook 설정",
+        "Jest + RTL + Playwright 설정",
+        "TypeScript strict 모드",
+        "Zod 도입",
+        "Lighthouse CI 설정",
+        "접근성 테스트 도구 설정"
+      ],
+      "packages": [
+        "@next/bundle-analyzer",
+        "@storybook/nextjs",
+        "jest",
+        "@testing-library/react",
+        "@playwright/test",
+        "zod",
+        "lighthouse",
+        "@axe-core/react"
+      ]
+    },
+    {
+      "name": "컴포넌트 리팩토링",
+      "weeks": [3, 4],
+      "components": {
+        "NewHeroSection": [
+          "HeroContent.tsx",
+          "HeroStats.tsx",
+          "HeroBackground.tsx",
+          "useHeroAnimations.ts"
+        ],
+        "NewFeaturesSection": [
+          "FeatureCard.tsx",
+          "AICurationCard.tsx",
+          "NewsIntegrationCard.tsx",
+          "RealtimeNotificationCard.tsx"
+        ],
+        "PersonalizationSection": [
+          "KeywordSelector.tsx",
+          "TopicSelector.tsx",
+          "SettingsPanel.tsx",
+          "usePersonalizationLogic.ts"
+        ]
+      }
+    },
+    {
+      "name": "상태 관리 현대화",
+      "weeks": [5, 6],
+      "zustand_stores": [
+        "usePersonalizationStore.ts",
+        "useNewsStore.ts",
+        "useUIStore.ts",
+        "useTranslationStore.ts"
+      ],
+      "migration": [
+        "Context → Zustand 마이그레이션",
+        "localStorage 영속화",
+        "상태 정규화"
+      ]
+    },
+    {
+      "name": "성능 최적화",
+      "weeks": [7, 8],
+      "optimizations": [
+        "코드 스플리팅 확대",
+        "Framer Motion 제거 (GSAP 통합)",
+        "이미지 최적화",
+        "번들 크기 최적화",
+        "SEO 최적화 (메타태그, 구조화 데이터)",
+        "접근성 개선 (ARIA, 키보드 네비게이션)"
+      ]
+    }
+  ],
+  "folder_structure": {
+    "app/components/": {
+      "sections/": {
+        "hero/": ["index.tsx", "HeroContent.tsx", "HeroStats.tsx", "hooks/"],
+        "features/": ["index.tsx", "FeatureCard.tsx", "cards/"],
+        "personalization/": ["index.tsx", "KeywordSelector.tsx", "hooks/"]
+      },
+      "common/": ["AnimatedCard.tsx", "LoadingSpinner.tsx", "ErrorBoundary.tsx"],
+      "ui/": "기존 shadcn/ui",
+      "design-system/": ["ColorSystem.tsx", "Typography.tsx", "Spacing.tsx", "Animation.tsx"]
+    }
+  },
+  "state_structure": {
+    "entities": {
+      "keywords": "Record<string, Keyword>",
+      "news": "Record<string, NewsItem>",
+      "topics": "Record<string, Topic>"
+    },
+    "ui": {
+      "selectedKeywordIds": "string[]",
+      "selectedTopicIds": "string[]",
+      "isLoading": "boolean"
+    },
+    "settings": {
+      "language": "string",
+      "theme": "'light' | 'dark'"
+    }
+  },
+  "risks": {
+    "high": [
+      "기존 기능 손상",
+      "성능 저하"
+    ],
+    "medium": [
+      "일정 지연",
+      "학습 곡선"
+    ]
+  },
+  "success_criteria": {
+    "performance": "First Load JS 200KB 이하",
+    "components": "각 컴포넌트 150줄 이하",
+    "coverage": "TypeScript 95%, 테스트 80%",
+    "functionality": "기존 기능 100% 동작",
+    "seo": "Lighthouse SEO 90점 이상",
+    "accessibility": "WCAG 2.1 AA 준수",
+    "design_system": "재사용 가능한 컴포넌트 라이브러리 구축"
+  },
+  "required_skills": {
+    "core": [
+      "React/Next.js 개발",
+      "TypeScript",
+      "Tailwind CSS",
+      "RESTful API 연동",
+      "상태 관리 (Zustand)"
+    ],
+    "testing": [
+      "Jest",
+      "React Testing Library",
+      "Playwright E2E",
+      "접근성 테스트"
+    ],
+    "optimization": [
+      "SEO 최적화",
+      "성능 최적화",
+      "접근성 개선",
+      "애니메이션 (GSAP)"
+    ],
+    "documentation": [
+      "Storybook",
+      "컴포넌트 문서화",
+      "디자인 시스템 구축"
+    ]
+  }
+} 

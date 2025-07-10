@@ -283,7 +283,7 @@ const PersonalizedNewsSection = React.memo(({ initialKeywords = [] }: Personaliz
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[...Array(6)].map((_, index) => (
-              <div key={index} className="bg-white rounded-lg overflow-hidden border border-[#E5E7EB]">
+              <div key={`skeleton-${index}`} className="bg-white rounded-lg overflow-hidden border border-[#E5E7EB]">
                 <div className="relative h-40 w-full">
                   <Skeleton className="h-full w-full absolute inset-0" />
                 </div>
@@ -311,7 +311,7 @@ const PersonalizedNewsSection = React.memo(({ initialKeywords = [] }: Personaliz
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {newsWithMatchedKeywords.map((item, index) => (
               <div 
-                key={item.id || index} 
+                key={`news-item-${item.id || index}-${item.title}`} 
                 className="bg-white rounded-lg overflow-hidden border border-[#E5E7EB] hover:border-[#D1D5DB] transition-colors will-change-transform hover:shadow-md"
               >
                 {item.imageUrl && (
@@ -344,7 +344,7 @@ const PersonalizedNewsSection = React.memo(({ initialKeywords = [] }: Personaliz
                   </p>
                   <div className="flex flex-wrap gap-1 mb-3">
                     {item.matchedKeywords && item.matchedKeywords.map((keyword, idx) => (
-                      <Badge key={idx} className="bg-[#EBF5FF] text-[#3B82F6]">
+                      <Badge key={`keyword-${item.id || index}-${idx}-${keyword.keyword}`} className="bg-[#EBF5FF] text-[#3B82F6]">
                         {keyword.keyword}
                       </Badge>
                     ))}
