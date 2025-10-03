@@ -1,0 +1,33 @@
+{
+  "personalizedNews": "Your Personalized News",
+  "personalizedNewsDesc": "AI-curated news based on your selected keywords.",
+  "changeKeywords": "Change Keywords",
+  "refreshNews": "Refresh",
+  "loadingNews": "Loading news...",
+  "refreshingNews": "Refreshing news...",
+  "loadingData": "Loading data...",
+  "completed": "Complete!",
+  "noNewsFound": "No News Found",
+  "noNewsDesc": "No news matches your selected keywords. Try different keywords or check back later.",
+  "tryAgain": "Try Again",
+  "changeKeywords": "Select Different Keywords",
+  "readMore": "Read More",
+  "saveNews": "Save News",
+  "categories": {
+    "politics": "Politics",
+    "economy": "Economy", 
+    "technology": "Technology",
+    "sports": "Sports",
+    "culture": "Culture",
+    "international": "International",
+    "health": "Health",
+    "environment": "Environment",
+    "science": "Science"
+  },
+  "errors": {
+    "networkError": "Please check your internet connection. Unable to connect to server.",
+    "timeout": "Server response timeout. Please try again later.",
+    "notFound": "The requested information could not be found.",
+    "general": "An error occurred while loading news. Please try again later."
+  }
+}

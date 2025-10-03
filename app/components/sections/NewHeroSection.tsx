@@ -1,10 +1,12 @@
 "use client";
 
-import { Button } from '@/src/components/ui/button';
+import NeumorphicButton from '../ui/NeumorphicButton';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import Link from 'next/link';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useScrollAnimation, useParallax } from '../../hooks/useScrollAnimation';
+import { useLayoutStabilization } from '../../hooks/useLayoutStabilization';
 
 // 앱 아이콘 컴포넌트
 const AppIcon = React.memo(({ 
@@ -58,27 +60,55 @@ const AppIcon = React.memo(({
     <motion.div
       ref={iconRef}
       className="flex flex-col items-center"
-      whileHover={{ scale: isMain ? 1.05 : 1.03 }} // 호버 효과 경량화
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ 
+        scale: isMain ? 1.1 : 1.05,
+        y: -2,
+        transition: { duration: 0.2, ease: "easeOut" }
+      }}
+      whileTap={{ scale: 0.95 }}
     >
-      <div 
-        className={`${isMain ? 'w-12 h-12' : 'w-10 h-10'} rounded-xl flex items-center justify-center text-white ${isMain ? 'text-lg' : 'text-base'} font-bold relative overflow-hidden mb-1 cursor-pointer will-change-transform`}
+      <motion.div 
+        className={`${isMain ? 'w-14 h-14' : 'w-12 h-12'} rounded-2xl flex items-center justify-center text-white ${isMain ? 'text-xl' : 'text-lg'} font-bold relative overflow-hidden mb-2 cursor-pointer will-change-transform`}
         style={{
           background: isMain 
-            ? 'linear-gradient(135deg, #374151, #4B5563)' // 메인 앱: 짙은 회색
-            : 'linear-gradient(135deg, #6B7280, #9CA3AF)', // 일반 앱: 밝은 회색
+            ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' // 메인 앱: 그라데이션
+            : 'linear-gradient(135deg, #6B7280, #9CA3AF)', // 일반 앱: 회색 그라데이션
           boxShadow: isMain 
-            ? '0 3px 8px rgba(0,0,0,0.2)' // 그림자 효과 경량화
-            : '0 2px 6px rgba(0,0,0,0.1)'
+            ? '0 8px 20px rgba(102, 126, 234, 0.3), 0 4px 8px rgba(0,0,0,0.1)' 
+            : '0 4px 12px rgba(107, 114, 128, 0.2), 0 2px 4px rgba(0,0,0,0.1)'
+        }}
+        whileHover={{
+          boxShadow: isMain 
+            ? '0 12px 30px rgba(102, 126, 234, 0.4), 0 6px 12px rgba(0,0,0,0.15)'
+            : '0 6px 18px rgba(107, 114, 128, 0.3), 0 3px 6px rgba(0,0,0,0.15)'
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-xl"></div>
+        {/* 글래스모피즘 효과 */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-tl from-white/10 to-transparent rounded-2xl"></div>
+        
+        {/* 메인 앱에 특별한 효과 */}
         {isMain && (
-          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-xl"></div>
+          <>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl"></div>
+            <motion.div 
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent rounded-2xl"
+              animate={{
+                x: ['-100%', '100%'],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "linear",
+                delay: delay + 2
+              }}
+            />
+          </>
         )}
-        <span className="relative z-10 text-white">{icon}</span>
-      </div>
-      <span className={`text-xs text-gray-900 dark:text-gray-100 font-medium text-center leading-tight max-w-[50px] truncate ${isMain ? 'font-bold' : ''}`}>
+        
+        <span className="relative z-10 text-white drop-shadow-sm">{icon}</span>
+      </motion.div>
+      <span className={`text-xs text-gray-900 dark:text-gray-100 font-medium text-center leading-tight max-w-[60px] truncate ${isMain ? 'font-bold text-blue-600 dark:text-blue-400' : ''}`}>
         {name}
       </span>
     </motion.div>
@@ -98,29 +128,77 @@ const Notification = React.memo(({
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: -20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -20, scale: 0.95 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
-      className="absolute top-12 left-1/2 transform -translate-x-1/2 w-56 sm:w-60 md:w-64 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md rounded-xl border border-white/30 dark:border-gray-700/30 p-3 shadow-xl cursor-pointer z-40 hover:scale-105 transition-transform duration-200"
+      initial={{ opacity: 0, y: -30, scale: 0.9, rotateX: -15 }}
+      animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+      exit={{ opacity: 0, y: -30, scale: 0.9, rotateX: -15 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="absolute top-12 left-1/2 transform -translate-x-1/2 w-64 sm:w-72 md:w-80 glass-card cursor-pointer z-40 smooth-lift"
       onClick={onDismiss}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      whileHover={{ 
+        scale: 1.05,
+        y: -4,
+        rotateY: 2,
+        transition: { duration: 0.3, ease: "easeOut" }
+      }}
+      whileTap={{ scale: 0.98 }}
     >
-      <div className="flex items-start space-x-2">
-        <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 animate-pulse">
-          <span className="text-white text-xs font-bold">뉴</span>
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-gray-900 dark:text-white text-sm font-semibold">뉴스 알림</span>
-            <span className="text-gray-500 dark:text-gray-400 text-xs">방금</span>
+      <div className="p-4">
+        <div className="flex items-start space-x-3">
+          <motion.div 
+            className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg"
+            animate={{
+              scale: [1, 1.1, 1],
+              rotate: [0, 5, -5, 0]
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          >
+            <span className="text-white text-sm font-bold">📱</span>
+          </motion.div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-900 dark:text-white text-sm font-bold">
+                🔥 뉴스 알림
+              </span>
+              <motion.span 
+                className="glass-card px-2 py-1 text-xs text-green-600 dark:text-green-400 font-semibold"
+                animate={{ opacity: [1, 0.7, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                방금 전
+              </motion.span>
+            </div>
+            <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-3">
+              ✨ AI가 선별한 맞춤 뉴스가 도착했습니다!
+            </p>
+            <motion.div 
+              className="modern-button text-xs px-3 py-2 flex items-center space-x-1"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <span>📖 지금 확인하기</span>
+              <motion.span
+                animate={{ x: [0, 3, 0] }}
+                transition={{ duration: 1, repeat: Infinity }}
+              >
+                →
+              </motion.span>
+            </motion.div>
           </div>
-          <p className="text-gray-700 dark:text-gray-300 text-xs leading-relaxed">
-            🔥 AI가 선별한 맞춤 뉴스가 도착했습니다!
-          </p>
-          <div className="mt-2 text-xs text-blue-600 dark:text-blue-400 font-medium">
-            클릭하여 확인 →
+        </div>
+        
+        {/* 하단 액션 표시기 */}
+        <div className="mt-3 pt-2 border-t border-white/20 dark:border-gray-600/20">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-gray-500 dark:text-gray-400">클릭하여 열기</span>
+            <div className="flex space-x-1">
+              <div className="w-1 h-1 bg-blue-500 rounded-full animate-pulse"></div>
+              <div className="w-1 h-1 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+              <div className="w-1 h-1 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+            </div>
           </div>
         </div>
       </div>
@@ -156,12 +234,12 @@ const StatusBar = React.memo(() => {
       </div>
       <div className="flex items-center space-x-1">
         <div className="flex space-x-0.5">
-          <div className="w-0.5 h-0.5 bg-white rounded-full"></div>
-          <div className="w-0.5 h-0.5 bg-white rounded-full"></div>
-          <div className="w-0.5 h-0.5 bg-white rounded-full"></div>
-          <div className="w-0.5 h-0.5 bg-white/50 rounded-full"></div>
+          <div className="w-0.5 h-0.5 bg-white dark:bg-gray-300 rounded-full"></div>
+          <div className="w-0.5 h-0.5 bg-white dark:bg-gray-300 rounded-full"></div>
+          <div className="w-0.5 h-0.5 bg-white dark:bg-gray-300 rounded-full"></div>
+          <div className="w-0.5 h-0.5 bg-white/50 dark:bg-gray-300/50 rounded-full"></div>
         </div>
-        <svg width="20" height="10" viewBox="0 0 24 12" className="text-white">
+        <svg width="20" height="10" viewBox="0 0 24 12" className="text-white dark:text-gray-300">
           <rect x="2" y="3" width="16" height="5" rx="2" fill="none" stroke="currentColor" strokeWidth="1"/>
           <rect x="19" y="4.5" width="1.5" height="1.5" rx="0.5" fill="currentColor"/>
           <rect x="4" y="4.5" width="12" height="1.5" rx="1" fill="currentColor"/>
@@ -243,14 +321,28 @@ const MessengerScreen = React.memo(({ onChatComplete }: { onChatComplete: () => 
 
   return (
     <div className="w-full h-full bg-gray-100 dark:bg-gray-900 flex flex-col">
-      {/* 헤더 */}
-      <div className="h-16 bg-white dark:bg-gray-800 shadow-sm flex items-center px-4 relative z-30">
-        <div className="w-8 h-8 rounded-full bg-blue-500 dark:bg-blue-600 mr-3 flex items-center justify-center">
-          <span className="text-white text-sm">📱</span>
-        </div>
+      {/* 헤더 - 글래스모피즘 스타일 */}
+      <div className="h-16 glass-card shadow-lg flex items-center px-4 relative z-30 border-b border-white/20 dark:border-gray-600/20">
+        <motion.div 
+          className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 mr-3 flex items-center justify-center shadow-lg"
+          animate={{
+            scale: [1, 1.05, 1],
+            rotate: [0, 2, -2, 0]
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        >
+          <span className="text-white text-lg">📱</span>
+        </motion.div>
         <div>
-          <div className="font-medium text-gray-900 dark:text-white">TalkTimes</div>
-          <div className="text-xs text-gray-500 dark:text-gray-400">온라인</div>
+          <div className="font-bold text-gray-900 dark:text-white text-lg">TalkTimes</div>
+          <div className="flex items-center space-x-1">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="text-xs text-green-600 dark:text-green-400 font-semibold">온라인</span>
+          </div>
         </div>
       </div>
       
@@ -267,40 +359,110 @@ const MessengerScreen = React.memo(({ onChatComplete }: { onChatComplete: () => 
           <div className="text-white/60 dark:text-gray-400 text-xs">지금</div>
         </div>
 
-        {/* 메시지 영역 */}
-        <div className="flex-1 p-3 space-y-2 overflow-hidden">
+        {/* 메시지 영역 - 개선된 스타일 */}
+        <div className="flex-1 p-4 space-y-3 overflow-hidden">
           {messages.map((message) => (
             <motion.div
               key={message.uniqueKey}
-              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              initial={{ opacity: 0, y: 15, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              className={`max-w-[85%] ${message.isUser ? 'ml-auto' : ''}`}
+              transition={{ 
+                duration: 0.4, 
+                ease: "easeOut",
+                type: "spring",
+                damping: 20
+              }}
+              className={`max-w-[80%] ${message.isUser ? 'ml-auto' : ''}`}
             >
-              <div className={`rounded-lg p-2 ${
-                message.isUser 
-                  ? 'bg-blue-500/90 backdrop-blur-sm' 
-                  : 'bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm'
-              }`}>
-                <p className={`text-xs leading-relaxed ${
-                  message.isUser ? 'text-white' : 'text-gray-800 dark:text-gray-200'
-                }`}>
+              <motion.div 
+                className={`rounded-2xl p-3 relative overflow-hidden ${
+                  message.isUser 
+                    ? 'bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg' 
+                    : 'glass-card text-gray-800 dark:text-gray-200'
+                }`}
+                whileHover={{ 
+                  scale: 1.02,
+                  transition: { duration: 0.2 }
+                }}
+              >
+                {/* 메시지 내용 */}
+                <p className="text-sm leading-relaxed relative z-10">
                   {message.text}
                 </p>
+                
+                {/* 사용자 메시지에 특별한 효과 */}
+                {message.isUser && (
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-2xl"></div>
+                )}
+                
+                {/* AI 메시지에 미묘한 아이콘 */}
+                {!message.isUser && (
+                  <motion.div 
+                    className="absolute bottom-1 right-2 text-xs opacity-50"
+                    animate={{ rotate: [0, 10, -10, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    🤖
+                  </motion.div>
+                )}
+              </motion.div>
+              
+              {/* 메시지 시간 표시 */}
+              <div className={`text-xs text-gray-500 dark:text-gray-400 mt-1 ${message.isUser ? 'text-right' : 'text-left'}`}>
+                방금 전
               </div>
             </motion.div>
           ))}
         </div>
 
-        {/* 입력창 */}
-        <div className="px-3 py-2 bg-white/10 dark:bg-gray-800/20 backdrop-blur-md border-t border-white/20 dark:border-gray-700/30">
-          <div className="flex items-center space-x-2">
-            <div className="flex-1 bg-white/20 dark:bg-gray-700/30 rounded-full px-3 py-1.5">
-              <span className="text-white/60 dark:text-gray-400 text-xs">메시지 입력...</span>
+        {/* 입력창 - 글래스모피즘 스타일 */}
+        <div className="p-4 glass-card border-t border-white/20 dark:border-gray-600/20">
+          <div className="flex items-center space-x-3">
+            <div className="flex-1 glass-card px-4 py-3 rounded-full">
+              <span className="text-gray-600 dark:text-gray-400 text-sm">💬 메시지 입력...</span>
             </div>
-            <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-              <span className="text-white text-xs">→</span>
-            </div>
+            <motion.div 
+              className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg cursor-pointer"
+              whileHover={{ 
+                scale: 1.1,
+                rotate: 10,
+                transition: { duration: 0.2 }
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <motion.span 
+                className="text-white text-lg"
+                animate={{ x: [0, 2, 0] }}
+                transition={{ duration: 1, repeat: Infinity }}
+              >
+                ➤
+              </motion.span>
+            </motion.div>
+          </div>
+          
+          {/* 하단 기능 버튼들 */}
+          <div className="flex items-center justify-center space-x-4 mt-3 pt-2 border-t border-white/10 dark:border-gray-600/10">
+            <motion.div 
+              className="glass-card p-2 rounded-full cursor-pointer"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span className="text-sm">📎</span>
+            </motion.div>
+            <motion.div 
+              className="glass-card p-2 rounded-full cursor-pointer"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span className="text-sm">📷</span>
+            </motion.div>
+            <motion.div 
+              className="glass-card p-2 rounded-full cursor-pointer"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span className="text-sm">🎤</span>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -325,22 +487,35 @@ const NewsCard = React.memo(({
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // 공식 권장: useLayoutEffect + ref + willChange + 최적화
+  // 개선된 애니메이션: 초기 상태를 완전히 숨김으로 설정하여 깜빡임 방지
   React.useLayoutEffect(() => {
     if (cardRef.current) {
-      gsap.fromTo(
-        cardRef.current,
-        { opacity: 0, scale: 0.85, willChange: 'transform, opacity' },
-        { opacity: 1, scale: 1, duration: 0.18, delay: delay, ease: 'power1.out', clearProps: 'willChange' }
-      );
+      // 초기 상태를 더 확실하게 숨김
+      gsap.set(cardRef.current, { 
+        opacity: 0, 
+        scale: 0.8, 
+        y: 20,
+        willChange: 'transform, opacity' 
+      });
+      
+      // 부드러운 등장 애니메이션
+      gsap.to(cardRef.current, {
+        opacity: 1, 
+        scale: 1, 
+        y: 0,
+        duration: 0.4, 
+        delay: delay, 
+        ease: 'power2.out',
+        clearProps: 'willChange'
+      });
     }
   }, [delay]);
 
-  // 카드 클릭 시 개인화 섹션으로 이동
+  // 카드 클릭 시 특징 섹션으로 이동 (두 번째 섹션)
   const handleCardClick = () => {
-    const personalizationSection = document.getElementById('personalization');
-    if (personalizationSection) {
-      personalizationSection.scrollIntoView({ 
+    const featuresSection = document.getElementById('features');
+    if (featuresSection) {
+      featuresSection.scrollIntoView({ 
         behavior: 'smooth',
         block: 'start'
       });
@@ -348,42 +523,90 @@ const NewsCard = React.memo(({
   };
 
   return (
-    <div
+    <motion.div
       ref={cardRef}
-      className="absolute bg-white/20 dark:bg-gray-800/20 backdrop-blur-md rounded-lg border border-white/30 dark:border-gray-600/30 p-3 shadow-lg cursor-pointer transform-gpu z-40 w-[180px] h-[140px] hover:scale-105 hover:shadow-xl transition-all duration-300"
+      className="absolute glass-card cursor-pointer transform-gpu z-40 w-[180px] sm:w-[200px] h-[160px] sm:h-[180px] md:w-[220px] md:h-[200px] opacity-0 focus-modern smooth-lift"
       style={{
         left: `${position.x}%`,
         top: `${position.y}%`,
         willChange: 'transform, opacity'
       }}
       onClick={handleCardClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleCardClick();
+        }
+      }}
+      tabIndex={0}
+      role="button"
+      aria-label={`뉴스 기사: ${title}. 클릭하여 특징 섹션으로 이동`}
+      whileHover={{ 
+        scale: 1.08,
+        y: -8,
+        rotateY: 5,
+        rotateX: 5,
+        transition: { duration: 0.3, ease: "easeOut" }
+      }}
+      whileTap={{ 
+        scale: 0.95,
+        transition: { duration: 0.1 }
+      }}
+      transition={{
+        duration: 0.4,
+        ease: "easeInOut"
+      }}
     >
-      <div className="h-full flex flex-col justify-between">
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-gray-900 dark:text-white">
-              경제
-            </span>
-            <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-          </div>
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-white leading-tight line-clamp-2 mb-2">
-            {title}
-          </h3>
-          <p className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed line-clamp-2">
-            {summary}
-          </p>
+      <div className="h-full flex flex-col p-3 sm:p-4">
+        {/* 뉴스 이미지 - 형광색 플레이스홀더 */}
+        <div className="neon-placeholder h-16 sm:h-20 mb-3 text-xs sm:text-sm">
+          📰 뉴스 이미지
         </div>
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            {timestamp}
-          </span>
-          <div className="flex items-center space-x-1">
-            <div className="w-1 h-1 bg-green-500 rounded-full"></div>
-            <span className="text-xs text-gray-500 dark:text-gray-400">실시간</span>
+        
+        <div className="flex-1 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <motion.span 
+                className="glass-card px-2 py-1 text-xs font-bold text-blue-600 dark:text-blue-400"
+                whileHover={{ scale: 1.05 }}
+              >
+                💼 경제
+              </motion.span>
+              <motion.div 
+                className="w-2 h-2 rounded-full bg-green-500"
+                animate={{
+                  scale: [1, 1.3, 1],
+                  opacity: [1, 0.6, 1]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              />
+            </div>
+            <h3 className="text-sm md:text-base font-bold text-gray-900 dark:text-white leading-tight line-clamp-2 mb-2">
+              {title}
+            </h3>
+            <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed line-clamp-2 mb-2">
+              {summary}
+            </p>
+          </div>
+          <div className="flex items-center justify-between pt-2 border-t border-white/20 dark:border-gray-600/20">
+            <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">
+              ⏰ {timestamp}
+            </span>
+            <div className="flex items-center space-x-1">
+              <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-xs text-green-600 dark:text-green-400 font-semibold">실시간</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* 3D 효과를 위한 하이라이트 */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-2xl pointer-events-none" />
+    </motion.div>
   );
 });
 NewsCard.displayName = 'NewsCard';
@@ -632,10 +855,10 @@ export default function NewHeroSection({
   
   // 핸들러 함수들 - 메모이제이션으로 안정성 확보
   const handleCardClick = useCallback(() => {
-    // 개인화 섹션으로 스크롤
-    const personalizationSection = document.getElementById('personalization');
-    if (personalizationSection) {
-      personalizationSection.scrollIntoView({ behavior: 'smooth' });
+    // 특징 섹션으로 스크롤 (두 번째 섹션)
+    const featuresSection = document.getElementById('features');
+    if (featuresSection) {
+      featuresSection.scrollIntoView({ behavior: 'smooth' });
     }
   }, []);
   
@@ -651,6 +874,13 @@ export default function NewHeroSection({
   const handleChatComplete = useCallback(() => {
     setShowCards(true);
   }, []);
+
+  // 스크롤 애니메이션과 패럴랙스 훅
+  const { elementRef: heroRef, isVisible: heroVisible } = useScrollAnimation({
+    threshold: 0.2,
+    rootMargin: '0px 0px -50px 0px'
+  });
+  const parallaxY = useParallax(0.3);
 
   useEffect(() => {
     // 컴포넌트 마운트 시 즉시 로드 상태로 변경
@@ -749,69 +979,158 @@ export default function NewHeroSection({
       `}</style>
       
       <section 
+        ref={heroRef}
         id={id}
-        className={`relative min-h-screen flex items-center justify-center overflow-hidden py-20 ${className}`}
+        className={`relative min-h-screen flex items-center justify-center overflow-hidden py-20 ${className} scroll-animate ${heroVisible ? 'visible' : ''}`}
         aria-label="히어로 섹션"
+        style={{
+          transform: `translateY(${parallaxY * 0.5}px)`,
+        }}
       >
+        {/* 배경 패럴랙스 요소들 */}
+        <div 
+          className="absolute inset-0 opacity-5 dark:opacity-10"
+          style={{
+            transform: `translateY(${parallaxY * 0.8}px)`,
+            backgroundImage: `
+              radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 80% 70%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 50% 50%, rgba(102, 126, 234, 0.05) 0%, transparent 70%)
+            `,
+          }}
+        />
+        
+        {/* 움직이는 배경 원들 */}
+        <motion.div
+          className="absolute top-1/4 left-1/4 w-32 h-32 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full blur-xl"
+          animate={{
+            x: [0, 50, -30, 0],
+            y: [0, -30, 20, 0],
+            scale: [1, 1.2, 0.8, 1],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          style={{
+            transform: `translateY(${parallaxY * 0.6}px)`,
+          }}
+        />
+        
+        <motion.div
+          className="absolute top-3/4 right-1/4 w-24 h-24 bg-gradient-to-r from-purple-400/10 to-pink-400/10 rounded-full blur-xl"
+          animate={{
+            x: [0, -40, 30, 0],
+            y: [0, 20, -40, 0],
+            scale: [1, 0.8, 1.3, 1],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          style={{
+            transform: `translateY(${parallaxY * 0.4}px)`,
+          }}
+        />
         
         {/* 콘텐츠 컨테이너 */}
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
             {/* 텍스트 섹션 */}
             <div className="w-full lg:w-1/2 text-center lg:text-left">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight mb-4">
-                <span className="text-[#3B82F6]">2분만에</span> 나에게<br />중요한 뉴스만
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 dark:text-white leading-tight mb-4">
+                <span className="text-[#3B82F6]">2분만에</span> 나에게<br className="hidden sm:block" /><span className="sm:hidden"> </span>중요한 뉴스만
               </h1>
-              <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-lg mx-auto lg:mx-0">
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-lg mx-auto lg:mx-0">
                 AI가 당신의 관심사를 분석하고 꼭 필요한 뉴스만 골라 매일 아침 전달합니다. 광고 없이, 깔끔하게.
               </p>
               
-              {/* 핵심 가치 배지 - 새로 추가 */}
-              <div className="flex flex-wrap gap-3 mb-8 justify-center lg:justify-start">
-                <span className="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-full text-sm font-medium border border-blue-100 dark:border-blue-800">
-                  개인 맞춤형 뉴스
-                </span>
-                <span className="bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 px-3 py-1 rounded-full text-sm font-medium border border-green-100 dark:border-green-800">
-                  시간 절약
-                </span>
-                <span className="bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 px-3 py-1 rounded-full text-sm font-medium border border-amber-100 dark:border-amber-800">
-                  광고 없음
-                </span>
-                <span className="bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-3 py-1 rounded-full text-sm font-medium border border-gray-100 dark:border-gray-700">
-                  무료
-                </span>
-              </div>
+              {/* 핵심 가치 배지 - 글래스모피즘 스타일로 업그레이드 */}
+              <motion.div className="flex flex-wrap gap-2 sm:gap-3 mb-6 sm:mb-8 justify-center lg:justify-start">
+                <motion.span 
+                  className="glass-card px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400 smooth-lift micro-bounce"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  ✨ 개인 맞춤형 뉴스
+                </motion.span>
+                <motion.span 
+                  className="glass-card px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-green-600 dark:text-green-400 smooth-lift micro-bounce"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  ⚡ 시간 절약
+                </motion.span>
+                <motion.span 
+                  className="glass-card px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-amber-600 dark:text-amber-400 smooth-lift micro-bounce"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  🚫 광고 없음
+                </motion.span>
+                <motion.span 
+                  className="glass-card px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-300 smooth-lift micro-bounce"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  💎 무료
+                </motion.span>
+              </motion.div>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Button 
-                  onClick={handleCardClick} 
-                  className="bg-[#3B82F6] dark:bg-[#60A5FA] hover:bg-blue-600 dark:hover:bg-blue-500 text-white px-8 py-3 rounded-lg text-lg font-medium transition-colors"
+                <motion.button
+                  onClick={handleCardClick}
+                  className="modern-button px-8 py-4 text-lg font-semibold ripple gradient-animate"
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98, y: 0 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
                 >
-                  무료로 시작하기
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 px-8 py-3 rounded-lg text-lg font-medium transition-colors"
+                  🚀 무료로 시작하기
+                </motion.button>
+                <motion.button 
+                  className="glass-card px-8 py-4 text-lg font-semibold text-gray-700 dark:text-gray-200 smooth-lift"
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98, y: 0 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
                 >
-                  서비스 둘러보기
-                </Button>
+                  👀 서비스 둘러보기
+                </motion.button>
               </div>
               
-              {/* 사용자 수치 - 새로 추가 */}
-              <div className="mt-12 grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-900 dark:text-white">1,000+</div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">활성 사용자</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-900 dark:text-white">50+</div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">뉴스 소스</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-900 dark:text-white">100%</div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">광고 없음</div>
-                </div>
-              </div>
+              {/* 사용자 수치 - 글래스모피즘 카드로 업그레이드 */}
+              <motion.div 
+                className="mt-12 grid grid-cols-3 gap-3 max-w-md mx-auto lg:mx-0"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8, duration: 0.6 }}
+              >
+                <motion.div 
+                  className="glass-card text-center py-4 px-2 smooth-lift"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">1,000+</div>
+                  <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">활성 사용자</div>
+                </motion.div>
+                <motion.div 
+                  className="glass-card text-center py-4 px-2 smooth-lift"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400 mb-1">50+</div>
+                  <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">뉴스 소스</div>
+                </motion.div>
+                <motion.div 
+                  className="glass-card text-center py-4 px-2 smooth-lift"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-400 mb-1">100%</div>
+                  <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">광고 없음</div>
+                </motion.div>
+              </motion.div>
             </div>
             
             {/* 아이폰 인터페이스 */}

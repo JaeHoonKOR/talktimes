@@ -1,0 +1,201 @@
+{
+  "common": {
+    "loading": "로딩중...",
+    "error": "오류가 발생했습니다",
+    "retry": "다시 시도",
+    "close": "닫기",
+    "save": "저장",
+    "cancel": "취소",
+    "confirm": "확인",
+    "back": "뒤로",
+    "next": "다음",
+    "previous": "이전",
+    "more": "더 보기",
+    "less": "접기"
+  },
+  "navigation": {
+    "home": "홈",
+    "news": "뉴스",
+    "search": "검색",
+    "bookmarks": "북마크",
+    "profile": "프로필",
+    "settings": "설정"
+  },
+  "hero": {
+    "title": "AI 기반 글로벌 뉴스",
+    "subtitle": "세계 각국의 뉴스를 실시간으로 번역하고 요약합니다",
+    "description": "복잡한 세상의 이야기를 간단하고 명확하게 전달하는 AI 뉴스 플랫폼",
+    "cta": {
+      "start": "시작하기",
+      "learn": "자세히 알아보기"
+    }
+  },
+  "features": {
+    "title": "핵심 기능",
+    "subtitle": "AI 기술로 뉴스 경험을 혁신합니다",
+    "realtime": {
+      "title": "실시간 번역",
+      "description": "세계 각국의 뉴스를 실시간으로 번역하여 제공합니다"
+    },
+    "ai_summary": {
+      "title": "AI 요약",
+      "description": "복잡한 뉴스를 핵심만 간추려 빠르게 이해할 수 있습니다"
+    },
+    "personalization": {
+      "title": "개인화 추천",
+      "description": "당신의 관심사에 맞는 뉴스를 똑똑하게 추천합니다"
+    },
+    "multiple_sources": {
+      "title": "다양한 소스",
+      "description": "전 세계 신뢰할 수 있는 뉴스 소스에서 정보를 수집합니다"
+    }
+  },
+  "search": {
+    "title": "스마트 뉴스 검색",
+    "subtitle": "고급 필터와 AI 기반 검색으로 원하는 뉴스를 정확하게 찾아보세요",
+    "placeholder": "검색어를 입력하세요...",
+    "button": "검색",
+    "searching": "검색중",
+    "filters": "필터",
+    "advanced_filters": "고급 필터",
+    "clear_all": "전체 초기화",
+    "suggestions": "검색 제안",
+    "results": "검색 결과",
+    "no_results": "검색 결과를 찾을 수 없습니다",
+    "try_different": "다른 검색어를 시도하거나 필터를 조정해보세요",
+    "filters_panel": {
+      "categories": "카테고리",
+      "sources": "뉴스 소스",
+      "date_range": "날짜 범위",
+      "start_date": "시작 날짜",
+      "end_date": "종료 날짜",
+      "sort_by": "정렬 기준",
+      "read_time": "읽기 시간",
+      "language": "언어"
+    },
+    "sort_options": {
+      "relevance": "관련성",
+      "date": "최신순",
+      "popularity": "인기순",
+      "read_time": "읽기 시간"
+    },
+    "read_time_options": {
+      "any": "전체",
+      "short": "짧음 (1-3분)",
+      "medium": "보통 (3-7분)",
+      "long": "길음 (7분+)"
+    },
+    "language_options": {
+      "all": "전체 언어",
+      "ko": "한국어",
+      "en": "English"
+    }
+  },
+  "categories": {
+    "tech": "기술",
+    "economy": "경제",
+    "politics": "정치",
+    "environment": "환경",
+    "sports": "스포츠",
+    "culture": "문화",
+    "science": "과학",
+    "health": "건강"
+  },
+  "activity_feed": {
+    "title": "실시간 활동 현황",
+    "subtitle": "지금 이 순간 TalkTimes를 이용하고 있는 사용자들의 활동을 실시간으로 확인하세요",
+    "stats": {
+      "active_users": "현재 접속자",
+      "daily_reads": "오늘 읽은 뉴스",
+      "daily_shares": "오늘 공유",
+      "avg_read_time": "평균 읽기 시간"
+    },
+    "live_activity": "실시간 활동",
+    "global_activity": "글로벌 활동",
+    "insights": {
+      "title": "실시간 인사이트",
+      "economy_popular": "경제 뉴스가 가장 인기 (34% 점유)",
+      "reading_time_up": "평균 체류시간이 전주 대비 15% 증가",
+      "mobile_users": "모바일 사용자 비율 72%"
+    }
+  },
+  "recommendations": {
+    "title": "당신만을 위한 뉴스 추천",
+    "subtitle": "AI가 당신의 관심사와 읽기 패턴을 분석하여 가장 관련성 높은 뉴스를 추천합니다",
+    "accuracy": "추천 정확도",
+    "interests": "관심사",
+    "settings": "추천 설정",
+    "categories": {
+      "trending": "지금 뜨는 뉴스",
+      "personalized": "맞춤 추천",
+      "similar": "비슷한 관심사"
+    },
+    "reason": "추천 이유",
+    "load_more": "더 많은 추천 뉴스 보기"
+  },
+  "bookmarks": {
+    "title": "북마크 & 공유",
+    "subtitle": "관심 있는 뉴스를 저장하고 정리하여 언제든 다시 읽어보세요",
+    "folders": {
+      "all": "전체",
+      "tech": "기술",
+      "business": "비즈니스",
+      "environment": "환경",
+      "read_later": "나중에 읽기"
+    },
+    "share_stats": "이번 주 공유 통계",
+    "share_menu": "공유하기",
+    "copy_link": "링크 복사",
+    "copied": "복사됨!",
+    "read": "읽기",
+    "empty_folder": "이 폴더가 비어있습니다",
+    "bookmark_suggestion": "관심 있는 뉴스를 북마크해서 나중에 읽어보세요"
+  },
+  "dashboard": {
+    "title": "나만의 대시보드",
+    "subtitle": "개인화된 읽기 통계와 설정을 한눈에 확인하고 관리하세요",
+    "greeting": "님, 안녕하세요!",
+    "member_since": "부터 함께하고 있습니다",
+    "tabs": {
+      "overview": "개요",
+      "statistics": "통계",
+      "settings": "설정"
+    },
+    "stats": {
+      "articles_read": "읽은 기사",
+      "time_spent": "읽은 시간",
+      "streak": "연속 일수",
+      "weekly_goal": "주간 목표",
+      "goal_remaining": "목표까지 {count}개 남았습니다"
+    },
+    "achievements": {
+      "title": "업적",
+      "unlocked_on": "에 달성"
+    },
+    "recent_activity": "최근 활동",
+    "reading_pattern": "읽기 패턴 분석",
+    "favorite_times": "선호 시간대",
+    "preferences": {
+      "interests": "관심 분야",
+      "reading_time": "선호 읽기 시간",
+      "notification_frequency": "알림 빈도"
+    },
+    "notifications": {
+      "title": "알림 설정",
+      "new_recommendations": "새 추천 뉴스",
+      "weekly_summary": "주간 요약",
+      "goal_achievement": "목표 달성",
+      "trending_news": "인기 뉴스"
+    }
+  },
+  "time": {
+    "minutes_ago": "{minutes}분 전",
+    "hours_ago": "{hours}시간 전",
+    "days_ago": "{days}일 전",
+    "seconds_ago": "{seconds}초 전"
+  },
+  "reading_time": {
+    "minutes": "{minutes}분",
+    "read": "읽기"
+  }
+}

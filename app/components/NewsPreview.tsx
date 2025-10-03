@@ -6,37 +6,21 @@ import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { NewsItem } from '../types';
 import { NewsPreviewProps } from '../types/sections';
+import { sampleNewsData } from '../data/sampleNews';
+import { useImageOptimization, getResponsiveSizes } from '../hooks/useImageOptimization';
 
-// 샘플 뉴스 데이터
-const sampleNewsData: NewsItem[] = [
-  {
-    id: 'sample1',
-    title: '삼성전자, 차세대 인공지능 반도체 개발 발표',
-    excerpt: '삼성전자가 메모리와 AI를 결합한 차세대 반도체 개발을 발표했습니다. 이번 기술은 기존 대비 전력 효율이 40% 향상되었으며, 내년 초부터 생산 예정입니다.',
-    category: '기술',
-    imageUrl: 'https://via.placeholder.com/300x200?text=Samsung+AI+Chip',
-    publishedAt: '2024-01-20T09:00:00Z',
-    source: '테크뉴스'
-  },
-  {
-    id: 'sample2',
-    title: '한국은행, 기준금리 동결 결정',
-    excerpt: '한국은행 금융통화위원회가 기준금리를 현 수준에서 동결하기로 결정했습니다. 이는 글로벌 경제 불확실성과 국내 물가 안정을 고려한 결정입니다.',
-    category: '경제',
-    imageUrl: 'https://via.placeholder.com/300x200?text=Bank+of+Korea',
-    publishedAt: '2024-01-19T14:30:00Z',
-    source: '경제일보'
-  },
-  {
-    id: 'sample3',
-    title: '네이버, 생성형 AI 서비스 출시',
-    excerpt: '네이버가 한국어에 최적화된 생성형 AI 서비스를 정식 출시했습니다. 국내 데이터로 훈련된 이 모델은 국내 환경에 맞는 응답을 제공합니다.',
-    category: '기술',
-    imageUrl: 'https://via.placeholder.com/300x200?text=Naver+AI',
-    publishedAt: '2024-01-18T11:15:00Z',
-    source: 'IT뉴스'
-  }
-];
+// NewsItem을 호환 가능한 형태로 변환하는 함수
+const convertNewsData = (newsData: any[]): NewsItem[] => {
+  return newsData.map(item => ({
+    id: item.id,
+    title: item.title,
+    excerpt: item.summary || item.content,
+    category: item.category,
+    imageUrl: `https://via.placeholder.com/400x225?text=${encodeURIComponent(item.category + ' 뉴스')}`,
+    publishedAt: new Date().toISOString(),
+    source: item.source
+  }));
+};
 
 // 애니메이션 variants
 const containerVariants = {
@@ -74,16 +58,23 @@ const buttonVariants = {
 };
 
 export default function NewsPreview({ initialNews }: NewsPreviewProps) {
-  const [news, setNews] = useState(initialNews.length > 0 ? initialNews : sampleNewsData);
+  const [news, setNews] = useState(() => {
+    if (initialNews && initialNews.length > 0) {
+      return initialNews;
+    }
+    // 새로운 샘플 데이터를 변환해서 사용
+    return convertNewsData(sampleNewsData.slice(0, 3));
+  });
   const [viewMode, setViewMode] = useState<'email' | 'kakao'>('email');
   const containerRef = useRef<HTMLDivElement>(null);
   const emailBtnRef = useRef<HTMLButtonElement>(null);
   const kakaoBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    // initialNews가 비어있으면 샘플 데이터 사용
-    if (initialNews.length === 0) {
-      console.log('샘플 뉴스 데이터를 사용합니다.');
+    // initialNews가 비어있으면 새로운 샘플 데이터 사용
+    if (!initialNews || initialNews.length === 0) {
+      console.log('새로운 실제 뉴스 샘플 데이터를 사용합니다.');
+      setNews(convertNewsData(sampleNewsData.slice(0, 3)));
     }
 
     // GSAP 애니메이션 설정
@@ -183,11 +174,12 @@ export default function NewsPreview({ initialNews }: NewsPreviewProps) {
                   src={item.imageUrl || "https://via.placeholder.com/300x200?text=News"}
                   alt={item.title}
                   fill
-                  className="object-cover"
-                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 200px"
+                  className="object-cover gpu-accelerated"
+                  sizes={getResponsiveSizes({ mobile: 90, tablet: 45, desktop: 25 })}
                   placeholder="blur"
                   blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjI1IiB2aWV3Qm94PSIwIDAgNDAwIDIyNSI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyMjUiIGZpbGw9IiNlZWVlZWUiLz48L3N2Zz4="
                   priority={index < 2}
+                  loading={index < 2 ? "eager" : "lazy"}
                     />
                     <div className="absolute top-2 left-2">
                       <span className="text-xs font-medium px-2 py-1 bg-black/70 text-white rounded-full">
@@ -398,11 +390,12 @@ export default function NewsPreview({ initialNews }: NewsPreviewProps) {
                                 src={item.imageUrl || "https://via.placeholder.com/300x200?text=News"}
                                 alt={item.title}
                                 fill
-                                className="object-cover rounded-md"
-                                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 200px"
+                                className="object-cover rounded-md gpu-accelerated"
+                                sizes={getResponsiveSizes({ mobile: 40, tablet: 30, desktop: 20 })}
                                 placeholder="blur"
                                 blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjI1IiB2aWV3Qm94PSIwIDAgNDAwIDIyNSI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIyMjUiIGZpbGw9IiNlZWVlZWUiLz48L3N2Zz4="
                                 priority={index < 2}
+                                loading={index < 2 ? "eager" : "lazy"}
                               />
                             </div>
                           </div>

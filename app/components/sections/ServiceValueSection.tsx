@@ -209,17 +209,53 @@ export default function ServiceValueSection({
             </div>
 
             {/* CTA 버튼 */}
-            <div className="text-center">
+            <div className="text-center space-y-4">
+              {/* 주요 CTA */}
               <Link 
                 href="/register"
-                className="px-8 py-3 bg-blue-600 text-white font-medium rounded-xl inline-block shadow-md hover:bg-blue-700 transition-colors duration-300 w-full"
+                className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl inline-block shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 w-full"
               >
-                지금 무료로 시작하기
+                <span className="flex items-center justify-center gap-2">
+                  🚀 7일 무료 체험 시작하기
+                  <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </span>
               </Link>
               
-              <p className="text-xs text-gray-500 mt-4">
-                신용카드 불필요 • 언제든 취소 가능
-              </p>
+              {/* 보조 CTA */}
+              <Link 
+                href="#news"
+                className="px-6 py-3 bg-transparent border-2 border-gray-300 text-gray-700 font-medium rounded-xl inline-block hover:border-blue-500 hover:text-blue-600 transition-colors duration-300 w-full"
+              >
+                📰 뉴스레터 샘플 먼저 보기
+              </Link>
+              
+              {/* 위험 감소 메시지 */}
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-4">
+                <div className="flex items-center justify-center gap-2 text-green-800 font-medium mb-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  100% 위험 부담 없음
+                </div>
+                <p className="text-sm text-green-700 text-center">
+                  • 신용카드 불필요 • 자동 결제 없음 • 언제든 1클릭 취소<br/>
+                  • 개인정보 완전 삭제 가능 • 스팸 메일 절대 없음
+                </p>
+              </div>
+              
+              {/* 사회적 증명 */}
+              <div className="flex items-center justify-center gap-4 text-sm text-gray-600 mt-6">
+                <div className="flex items-center gap-1">
+                  <span className="text-yellow-500">⭐⭐⭐⭐⭐</span>
+                  <span className="font-medium">4.8/5.0</span>
+                </div>
+                <div className="w-px h-4 bg-gray-300"></div>
+                <div className="font-medium">12,847명이 이미 사용 중</div>
+                <div className="w-px h-4 bg-gray-300"></div>
+                <div className="text-green-600 font-medium">지금 726명 온라인</div>
+              </div>
             </div>
           </div>
         </div>

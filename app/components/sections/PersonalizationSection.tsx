@@ -1,39 +1,49 @@
 "use client";
 
 import { Badge } from '@/src/components/ui/badge';
-import { Button } from '@/src/components/ui/button';
-import { Input } from '@/src/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/src/components/ui/select';
+import { motion, AnimatePresence } from 'framer-motion';
 import React, { memo, useCallback, useState } from 'react';
 import { Keyword } from '../../types';
 import { SectionProps } from '../../types/sections';
 import PersonalizedNewsSection from '../PersonalizedNewsSection';
+import GlassmorphicCard from '../ui/GlassmorphicCard';
+import NeumorphicButton from '../ui/NeumorphicButton';
+import NeumorphicInput from '../ui/NeumorphicInput';
 
-// 카테고리 데이터 (원래 KeywordManager에서 가져옴)
+// 카테고리 데이터 - Tailwind category 색상 사용
 const CATEGORIES = [
   { 
     name: '테크/IT', 
     icon: 'tech', 
-    color: 'bg-[#F59E0B]/20 text-[#F59E0B] font-medium border-[#F59E0B]/30',
-    bgColor: '#F59E0B' 
+    color: 'from-category-technology-light to-category-technology-light dark:from-category-technology-dark dark:to-category-technology-dark',
+    bgColor: '#8B5CF6',
+    lightColor: '#8B5CF6',
+    darkColor: '#A78BFA'
   },
   { 
     name: '경제/금융', 
     icon: 'finance', 
-    color: 'bg-[#10B981]/20 text-[#10B981] font-medium border-[#10B981]/30',
-    bgColor: '#10B981'
+    color: 'from-category-economy-light to-category-economy-light dark:from-category-economy-dark dark:to-category-economy-dark',
+    bgColor: '#10B981',
+    lightColor: '#10B981',
+    darkColor: '#34D399'
   },
   { 
     name: '정치/사회', 
     icon: 'politics', 
-    color: 'bg-[#3B82F6]/20 text-[#3B82F6] font-medium border-[#3B82F6]/30',
-    bgColor: '#3B82F6'
+    color: 'from-category-politics-light to-category-politics-light dark:from-category-politics-dark dark:to-category-politics-dark',
+    bgColor: '#3B82F6',
+    lightColor: '#3B82F6',
+    darkColor: '#60A5FA'
   },
   { 
     name: '문화/예술', 
     icon: 'culture', 
-    color: 'bg-[#4B5563]/20 text-[#4B5563] font-medium border-[#4B5563]/30',
-    bgColor: '#4B5563'
+    color: 'from-category-culture-light to-category-culture-light dark:from-category-culture-dark dark:to-category-culture-dark',
+    bgColor: '#F59E0B',
+    lightColor: '#F59E0B',
+    darkColor: '#FBBF24'
   },
 ];
 
@@ -251,7 +261,7 @@ const PersonalizationSection = memo(({ className = '', id = 'personalization' }:
             {/* 첫 번째 행: 그리드 레이아웃 */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* 왼쪽: 새 관심 주제 추가 */}
-              <div className="bg-white rounded-lg p-4 border border-[#E5E7EB] min-h-[320px]">
+              <GlassmorphicCard variant="medium" blur="lg" className="min-h-[320px]" interactive glow>
                 <div className="mb-3">
                   <h3 className="text-base font-semibold mb-1">새 관심 주제 추가</h3>
                   <p className="text-sm text-gray-500">관심 있는 주제를 추가하세요</p>
@@ -259,11 +269,11 @@ const PersonalizationSection = memo(({ className = '', id = 'personalization' }:
                 <div className="space-y-3">
                   <div className="grid grid-cols-3 gap-2">
                     <div className="col-span-2">
-                      <Input
+                      <NeumorphicInput
                         value={newKeyword}
                         onChange={(e) => setNewKeyword(e.target.value)}
                         placeholder="예: 인공지능, 주식투자, 건강관리..."
-                        className="w-full text-[#121212]"
+                        className="w-full text-gray-900 dark:text-gray-100"
                         onKeyPress={(e) => {
                           if (e.key === 'Enter' && newKeyword.trim()) {
                             e.preventDefault();
@@ -271,6 +281,7 @@ const PersonalizationSection = memo(({ className = '', id = 'personalization' }:
                           }
                         }}
                         aria-label="관심 주제 입력"
+                        pressed={false}
                       />
                     </div>
                     <div className="col-span-1">
@@ -303,10 +314,12 @@ const PersonalizationSection = memo(({ className = '', id = 'personalization' }:
                   )}
                   
                   <div className="flex justify-end">
-                    <Button
+                    <NeumorphicButton
                       onClick={handleAddKeyword}
                       disabled={!newKeyword.trim() || isButtonLoading}
-                      className="bg-[#3B82F6] hover:bg-[#2563EB] text-white"
+                      variant="primary"
+                      className="text-white"
+                      pressed={false}
                     >
                       {isButtonLoading ? (
                         <span className="flex items-center">
@@ -317,7 +330,7 @@ const PersonalizationSection = memo(({ className = '', id = 'personalization' }:
                           추가 중...
                         </span>
                       ) : '주제 추가'}
-                    </Button>
+                    </NeumorphicButton>
                   </div>
                 </div>
                 
@@ -326,29 +339,44 @@ const PersonalizationSection = memo(({ className = '', id = 'personalization' }:
                   <div className="mt-4">
                     <h4 className="text-sm font-medium mb-2">선택된 관심 주제</h4>
                     <div className="flex flex-wrap gap-2">
-                      {selectedKeywords.map((keyword) => (
-                        <Badge
-                          key={keyword.id || keyword.keyword}
-                          className="bg-[#F5F5F5] hover:bg-[#EFEFEF] text-[#121212] cursor-pointer flex items-center"
-                          onClick={() => handleDeleteKeyword(keyword)}
-                        >
-                          {keyword.keyword}
-                          <span 
-                            className="ml-1 text-[#9CA3AF] hover:text-[#EF4444]" 
-                            role="button" 
-                            aria-label={`${keyword.keyword} 주제 삭제`}
+                      {selectedKeywords.map((keyword) => {
+                        const category = CATEGORIES.find(cat => cat.name === keyword.category);
+                        return (
+                          <motion.div
+                            key={keyword.id || keyword.keyword}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            transition={{ duration: 0.2 }}
                           >
-                            ×
-                          </span>
-                        </Badge>
-                      ))}
+                            <Badge
+                              className="cursor-pointer flex items-center transition-all duration-200 hover:scale-105"
+                              style={{
+                                backgroundColor: category ? `${category.lightColor}20` : '#F5F5F5',
+                                color: category ? category.lightColor : '#121212',
+                                borderColor: category ? `${category.lightColor}40` : '#E5E7EB'
+                              }}
+                              onClick={() => handleDeleteKeyword(keyword)}
+                            >
+                              {keyword.keyword}
+                              <span 
+                                className="ml-1 hover:text-red-500 transition-colors duration-200" 
+                                role="button" 
+                                aria-label={`${keyword.keyword} 주제 삭제`}
+                              >
+                                ×
+                              </span>
+                            </Badge>
+                          </motion.div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
-              </div>
+              </GlassmorphicCard>
               
               {/* 오른쪽: 추천 주제 */}
-              <div className="bg-white rounded-lg p-4 border border-[#E5E7EB] min-h-[320px]">
+              <GlassmorphicCard variant="medium" blur="lg" className="min-h-[320px]" interactive glow>
                 <div className="mb-3">
                   <h3 className="text-base font-semibold mb-1 flex items-center">
                     <span className="text-[#3B82F6] mr-2">
@@ -361,61 +389,92 @@ const PersonalizationSection = memo(({ className = '', id = 'personalization' }:
                   <p className="text-sm text-[#4B5563] ml-6">관심 있는 주제를 선택해 보세요</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {CATEGORIES.map((category) => (
-                    <div 
-                      key={category.name} 
-                      className="bg-white rounded-lg p-3 border border-[#E5E7EB]"
+                  {CATEGORIES.map((category, index) => (
+                    <motion.div
+                      key={category.name}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
                     >
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="flex items-center justify-center w-6 h-6 bg-[#F5F5F5] rounded-full text-[#3B82F6]">
-                          {CATEGORY_ICONS[category.icon]}
-                        </span>
-                        <h4 className="font-medium text-sm text-[#121212]">{category.name}</h4>
-                      </div>
-                      <div className="flex flex-wrap gap-1">
-                        {SUGGESTED_KEYWORDS[category.name as keyof typeof SUGGESTED_KEYWORDS]?.map(suggestion => (
-                          <button
-                            key={suggestion}
-                            onClick={() => handleSuggestedKeywordClick(suggestion, category.name)}
-                            className="bg-[#F5F5F5] hover:bg-[#EFEFEF] text-[#121212] text-xs px-2 py-1 rounded-full focus:outline-none focus:ring-1 focus:ring-[#3B82F6]"
-                            aria-label={`${suggestion} 주제 추가`}
+                      <GlassmorphicCard 
+                        variant="light"
+                        blur="md"
+                        className="transition-all duration-300"
+                        interactive
+                        style={{
+                          background: `linear-gradient(135deg, ${category.lightColor}15, ${category.lightColor}05)`,
+                          borderColor: `${category.lightColor}30`
+                        }}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <span 
+                            className="flex items-center justify-center w-6 h-6 rounded-full"
+                            style={{
+                              backgroundColor: `${category.lightColor}20`,
+                              color: category.lightColor
+                            }}
                           >
-                            {suggestion}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
+                            {CATEGORY_ICONS[category.icon]}
+                          </span>
+                          <h4 className="font-medium text-sm text-gray-900 dark:text-gray-100">{category.name}</h4>
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {SUGGESTED_KEYWORDS[category.name as keyof typeof SUGGESTED_KEYWORDS]?.map(suggestion => (
+                            <motion.button
+                              key={suggestion}
+                              onClick={() => handleSuggestedKeywordClick(suggestion, category.name)}
+                              className="text-xs px-2 py-1 rounded-full focus:outline-none focus:ring-2 transition-all duration-200"
+                              style={{
+                                backgroundColor: `${category.lightColor}15`,
+                                color: category.lightColor,
+                                borderColor: `${category.lightColor}30`
+                              }}
+                              whileHover={{ 
+                                scale: 1.05,
+                                backgroundColor: `${category.lightColor}25`
+                              }}
+                              whileTap={{ scale: 0.95 }}
+                              aria-label={`${suggestion} 주제 추가`}
+                            >
+                              {suggestion}
+                            </motion.button>
+                          ))}
+                        </div>
+                      </GlassmorphicCard>
+                    </motion.div>
                   ))}
                 </div>
-          </div>
+              </GlassmorphicCard>
             </div>
 
             {/* 두 번째 행: 맞춤형 뉴스 받기 버튼 */}
             <div className="text-center py-8 my-4">
-              <Button
+              <NeumorphicButton
                 onClick={() => handleSettingsComplete(selectedKeywords)}
-                className="bg-[#3B82F6] hover:bg-[#2563EB] text-white px-8 py-2 text-lg"
+                variant="primary"
+                className="text-white px-8 py-2 text-lg"
                 disabled={selectedKeywords.length === 0 || isButtonLoading}
+                pressed={false}
               >
                 {isButtonLoading ? (
                   <span className="flex items-center">
                     <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 714 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                     처리 중...
                   </span>
                 ) : '맞춤형 뉴스 받기 시작하기'}
-              </Button>
+              </NeumorphicButton>
               {selectedKeywords.length === 0 && (
                 <p className="text-sm text-gray-500 mt-2">관심 주제를 하나 이상 선택해주세요</p>
               )}
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-lg p-4 sm:p-6 border border-[#E5E7EB] min-h-[500px]">
+          <GlassmorphicCard variant="medium" blur="xl" className="min-h-[500px]" interactive glow>
             <div className="mb-3 flex justify-between items-center">
-              <h3 className="text-lg font-medium text-[#121212]">맞춤형 뉴스</h3>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">맞춤형 뉴스</h3>
               <button 
                 onClick={handleBackToSettings}
                 className="text-sm text-[#3B82F6] hover:text-[#2563EB] focus:outline-none rounded-md px-2 py-1 flex items-center"
@@ -428,7 +487,7 @@ const PersonalizationSection = memo(({ className = '', id = 'personalization' }:
               </button>
             </div>
             <PersonalizedNewsSection initialKeywords={selectedKeywords} />
-          </div>
+          </GlassmorphicCard>
         )}
       </div>
     </section>

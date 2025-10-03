@@ -1,0 +1,201 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "more": "Show more",
+    "less": "Show less"
+  },
+  "navigation": {
+    "home": "Home",
+    "news": "News",
+    "search": "Search",
+    "bookmarks": "Bookmarks",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "hero": {
+    "title": "AI-Powered Global News",
+    "subtitle": "Real-time translation and summarization of news from around the world",
+    "description": "An AI news platform that delivers complex world stories simply and clearly",
+    "cta": {
+      "start": "Get Started",
+      "learn": "Learn More"
+    }
+  },
+  "features": {
+    "title": "Key Features",
+    "subtitle": "Revolutionizing news experience with AI technology",
+    "realtime": {
+      "title": "Real-time Translation",
+      "description": "Get news from around the world translated in real-time"
+    },
+    "ai_summary": {
+      "title": "AI Summary",
+      "description": "Understand complex news quickly with AI-powered summaries"
+    },
+    "personalization": {
+      "title": "Personalized Recommendations",
+      "description": "Smart news recommendations tailored to your interests"
+    },
+    "multiple_sources": {
+      "title": "Multiple Sources",
+      "description": "Information gathered from trusted news sources worldwide"
+    }
+  },
+  "search": {
+    "title": "Smart News Search",
+    "subtitle": "Find exactly what you're looking for with advanced filters and AI-powered search",
+    "placeholder": "Enter search terms...",
+    "button": "Search",
+    "searching": "Searching",
+    "filters": "Filters",
+    "advanced_filters": "Advanced Filters",
+    "clear_all": "Clear All",
+    "suggestions": "Search Suggestions",
+    "results": "Search Results",
+    "no_results": "No search results found",
+    "try_different": "Try different keywords or adjust your filters",
+    "filters_panel": {
+      "categories": "Categories",
+      "sources": "News Sources",
+      "date_range": "Date Range",
+      "start_date": "Start Date",
+      "end_date": "End Date",
+      "sort_by": "Sort By",
+      "read_time": "Reading Time",
+      "language": "Language"
+    },
+    "sort_options": {
+      "relevance": "Relevance",
+      "date": "Latest",
+      "popularity": "Most Popular",
+      "read_time": "Reading Time"
+    },
+    "read_time_options": {
+      "any": "Any",
+      "short": "Short (1-3 min)",
+      "medium": "Medium (3-7 min)",
+      "long": "Long (7+ min)"
+    },
+    "language_options": {
+      "all": "All Languages",
+      "ko": "한국어",
+      "en": "English"
+    }
+  },
+  "categories": {
+    "tech": "Technology",
+    "economy": "Economy",
+    "politics": "Politics",
+    "environment": "Environment",
+    "sports": "Sports",
+    "culture": "Culture",
+    "science": "Science",
+    "health": "Health"
+  },
+  "activity_feed": {
+    "title": "Real-time Activity",
+    "subtitle": "See what TalkTimes users are reading and sharing right now",
+    "stats": {
+      "active_users": "Active Users",
+      "daily_reads": "Daily Reads",
+      "daily_shares": "Daily Shares",
+      "avg_read_time": "Avg. Read Time"
+    },
+    "live_activity": "Live Activity",
+    "global_activity": "Global Activity",
+    "insights": {
+      "title": "Real-time Insights",
+      "economy_popular": "Economy news is most popular (34% share)",
+      "reading_time_up": "Average session time increased 15% vs last week",
+      "mobile_users": "72% mobile users"
+    }
+  },
+  "recommendations": {
+    "title": "News Recommended Just for You",
+    "subtitle": "AI analyzes your interests and reading patterns to recommend the most relevant news",
+    "accuracy": "Recommendation Accuracy",
+    "interests": "Interests",
+    "settings": "Recommendation Settings",
+    "categories": {
+      "trending": "Trending Now",
+      "personalized": "Personalized",
+      "similar": "Similar Interests"
+    },
+    "reason": "Why this article",
+    "load_more": "Load More Recommendations"
+  },
+  "bookmarks": {
+    "title": "Bookmarks & Sharing",
+    "subtitle": "Save and organize interesting news to read again anytime",
+    "folders": {
+      "all": "All",
+      "tech": "Technology",
+      "business": "Business",
+      "environment": "Environment",
+      "read_later": "Read Later"
+    },
+    "share_stats": "This Week's Sharing Stats",
+    "share_menu": "Share",
+    "copy_link": "Copy Link",
+    "copied": "Copied!",
+    "read": "Read",
+    "empty_folder": "This folder is empty",
+    "bookmark_suggestion": "Bookmark interesting news to read later"
+  },
+  "dashboard": {
+    "title": "Your Personal Dashboard",
+    "subtitle": "View and manage your personalized reading statistics and settings at a glance",
+    "greeting": ", welcome back!",
+    "member_since": "Member since",
+    "tabs": {
+      "overview": "Overview",
+      "statistics": "Statistics",
+      "settings": "Settings"
+    },
+    "stats": {
+      "articles_read": "Articles Read",
+      "time_spent": "Time Spent",
+      "streak": "Reading Streak",
+      "weekly_goal": "Weekly Goal",
+      "goal_remaining": "{count} articles remaining to reach your goal"
+    },
+    "achievements": {
+      "title": "Achievements",
+      "unlocked_on": "Unlocked on"
+    },
+    "recent_activity": "Recent Activity",
+    "reading_pattern": "Reading Pattern Analysis",
+    "favorite_times": "Preferred Reading Times",
+    "preferences": {
+      "interests": "Interest Areas",
+      "reading_time": "Preferred Reading Length",
+      "notification_frequency": "Notification Frequency"
+    },
+    "notifications": {
+      "title": "Notification Settings",
+      "new_recommendations": "New Recommendations",
+      "weekly_summary": "Weekly Summary",
+      "goal_achievement": "Goal Achievement",
+      "trending_news": "Trending News"
+    }
+  },
+  "time": {
+    "minutes_ago": "{minutes} minutes ago",
+    "hours_ago": "{hours} hours ago",
+    "days_ago": "{days} days ago",
+    "seconds_ago": "{seconds} seconds ago"
+  },
+  "reading_time": {
+    "minutes": "{minutes} min",
+    "read": "read"
+  }
+}

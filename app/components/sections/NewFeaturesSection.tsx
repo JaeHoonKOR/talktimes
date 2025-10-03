@@ -1,6 +1,7 @@
 "use client";
 
 import { Card } from '@/src/components/ui/card';
+import GlassmorphicCard from '../ui/GlassmorphicCard';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import React, { useEffect, useRef } from 'react';
@@ -14,8 +15,11 @@ const KeywordTag = ({
   position: { x: number; y: number; rotation: number };
 }) => {
   return (
-    <div
-      className="absolute bg-white border border-[#E5E7EB] text-[#121212] px-3 py-1 rounded-full text-sm font-bold shadow-sm"
+    <GlassmorphicCard
+      variant="light"
+      blur="sm"
+      size="sm"
+      className="absolute text-gray-900 dark:text-gray-100 px-3 py-1 rounded-full text-sm font-bold"
       style={{
         left: `${position.x}%`,
         top: `${position.y}%`,
@@ -25,7 +29,7 @@ const KeywordTag = ({
       role="note"
     >
       {text}
-    </div>
+    </GlassmorphicCard>
   );
 };
 
@@ -36,13 +40,16 @@ const StaticNewsLogo = ({
   index: number; 
 }) => {
   return (
-    <div
-      className="w-8 h-8 rounded-lg flex items-center justify-center bg-white border border-[#E5E7EB] text-[#4B5563] text-sm font-bold shadow-none"
+    <GlassmorphicCard
+      variant="light"
+      blur="xs"
+      size="sm"
+      className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-600 dark:text-gray-300 text-sm font-bold"
       aria-label={`언론사 ${String.fromCharCode(65 + index)}`}
       role="img"
     >
       {String.fromCharCode(65 + index)}
-    </div>
+    </GlassmorphicCard>
   );
 };
 
@@ -212,8 +219,13 @@ const FeatureCard = ({
   description: string;
 }) => {
   return (
-    <div
-      className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col h-80 group cursor-pointer overflow-hidden"
+    <GlassmorphicCard
+      variant="medium"
+      blur="lg"
+      size="lg"
+      interactive
+      glow
+      className="flex flex-col h-80 group cursor-pointer overflow-hidden"
       role="article"
       tabIndex={0}
     >
@@ -223,15 +235,15 @@ const FeatureCard = ({
       </div>
       
       {/* 텍스트 영역 (30%) */}
-      <div className="p-4 text-center bg-white">
-        <h3 className="text-base font-semibold text-[#121212] mb-1">
+      <div className="p-4 text-center bg-glass-white dark:bg-glass-black backdrop-blur-glass-sm">
+        <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1">
           {title}
         </h3>
-        <p className="text-xs text-[#9CA3AF] leading-relaxed">
+        <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
           {description}
         </p>
       </div>
-    </div>
+    </GlassmorphicCard>
   );
 };
 

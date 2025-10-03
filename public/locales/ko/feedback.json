@@ -1,0 +1,17 @@
+{
+  "title": "피드백",
+  "leaveFeedback": "피드백 남기기",
+  "close": "피드백 창 닫기",
+  "ratingPrompt": "서비스에 대한 만족도를 평가해주세요.",
+  "commentPlaceholder": "의견을 자유롭게 남겨주세요 (선택사항)",
+  "commentLabel": "피드백 내용",
+  "submitButton": "피드백 보내기",
+  "submitting": "전송 중",
+  "cancel": "취소",
+  "thankYou": "피드백을 보내주셔서 감사합니다!",
+  "improvementMessage": "소중한 의견으로 서비스를 개선하겠습니다.",
+  "ratingLabel": "{{rating}}점",
+  "ratingRequired": "별점을 선택해주세요",
+  "errorMessage": "피드백 제출 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+  "emailContact": "더 자세한 의견은 {{email}}으로 보내주세요"
+}
